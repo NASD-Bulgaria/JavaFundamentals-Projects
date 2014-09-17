@@ -10,6 +10,10 @@ import javax.swing.JMenuItem;
 
 public class CongressCenterForm extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JDesktopPane jDesktopPane;
 	
 	CongressCenterForm() {
@@ -20,30 +24,37 @@ public class CongressCenterForm extends JFrame {
 		final ScheduleForm scheduleForm = new ScheduleForm();
 		final AboutForm aboutForm = new AboutForm();
 		
-		JMenu fileMenu = new JMenu("File");
-
-		JMenuItem hallsMenuItem = new JMenuItem("Halls");
-		JMenuItem eventsMenuItem = new JMenuItem("Events");
-		JMenuItem scheduleMenuItem = new JMenuItem("Schedule");
-
-		fileMenu.add(hallsMenuItem);
-		fileMenu.add(eventsMenuItem);
-		fileMenu.add(scheduleMenuItem);
-		fileMenu.addSeparator();
+		JMenu hallMenu = new JMenu("Halls");
+		JMenuItem addHall = new JMenuItem("Add");
+		hallMenu.add(addHall);
+		hallMenu.addSeparator();
 		JMenuItem exitItem = new JMenuItem("Exit");
-		fileMenu.add(exitItem);
+		hallMenu.add(exitItem);
+		
+		JMenu eventMenu = new JMenu("Events");
+		JMenuItem addEvent = new JMenuItem("Add Event");
+		eventMenu.add(addEvent);
+		
+		JMenu schedule = new JMenu("Schedule");
+		JMenuItem showSchedule = new JMenuItem("Show Schedule");
+		schedule.add(showSchedule);
+		JMenuItem editSchedule= new JMenuItem("Edit schedule");
+		schedule.add(editSchedule);
+		
 
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem aboutMenuItem = new JMenuItem("About our companies");
 		helpMenu.add(aboutMenuItem);
 
 		JMenuBar bar = new JMenuBar();
-		bar.add(fileMenu);
+		bar.add(hallMenu);
+		bar.add(eventMenu);
+		bar.add(schedule);
 		bar.add(helpMenu);
 		setJMenuBar(bar);
 		add(jDesktopPane);
 		
-		hallsMenuItem.addActionListener(new ActionListener() {
+		addHall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!hallForm.isVisible()){
 				jDesktopPane.add(hallForm);
@@ -52,23 +63,25 @@ public class CongressCenterForm extends JFrame {
 			}
 		});
 		
-		eventsMenuItem.addActionListener(new ActionListener() {
+		addEvent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!eventForm.isVisible()){
-				jDesktopPane.add(eventForm);
-				eventForm.setVisible(true);
+					jDesktopPane.add(eventForm);
+					eventForm.setVisible(true);
+				}
+				
+			}
+		});
+		
+		showSchedule.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(!scheduleForm.isVisible()){
+					jDesktopPane.add(scheduleForm);
+					scheduleForm.setVisible(true);
 				}
 			}
 		});
 		
-		scheduleMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(!scheduleForm.isVisible()){
-				jDesktopPane.add(scheduleForm);
-				scheduleForm.setVisible(true);
-				}
-			}
-		});
 		
 		aboutMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
