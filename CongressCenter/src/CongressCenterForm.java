@@ -54,6 +54,8 @@ public class CongressCenterForm extends JFrame {
 		setJMenuBar(bar);
 		add(jDesktopPane);
 		
+		
+		//events and actions
 		addHall.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!hallForm.isVisible()){
