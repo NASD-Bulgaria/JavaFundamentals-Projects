@@ -1,5 +1,7 @@
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -24,8 +26,6 @@ public class PEventForm extends JPanel {
 	private JLabel endDate;
 	private JLabel type;
 	private JLabel description;
-	private JLabel equipment;
-	private JLabel arrangement;
 	private JLabel promotionalMaterials;
 	
 	private JTextField eventName;
@@ -41,6 +41,8 @@ public class PEventForm extends JPanel {
 	private JButton addEvent;
 	private JButton editEvent;
 	private JButton removeEvent;
+	private JButton equipment;
+	private JButton hallArrangement;
 	
 	private JTable eventsTable;
 	private String[] eventTableColumnNames = {"Name", "Duration", "Start Date", "End Date", "Type", "Description"};
@@ -53,7 +55,7 @@ public class PEventForm extends JPanel {
 	PEventForm() {
 		
 		setLayout(null);
-		setSize(950, 650);
+		setSize(1000, 1000);
 		setBackground(Color.GRAY);
 		
 		//name
@@ -103,25 +105,40 @@ public class PEventForm extends JPanel {
 		add(eventDescription);
 		
 		addEvent = new JButton("Add Event");
-		addEvent.setBounds(800, 100, 120, 40);
+		addEvent.setBounds(10, 520, 120, 40);
 		add(addEvent);
 		
 		editEvent = new JButton("Edit Event");
-		editEvent.setBounds(800, 200, 120, 40);
+		editEvent.setBounds(140, 520, 120, 40);
 		add(editEvent);
 		
 		removeEvent = new JButton("Remove Event");
-		removeEvent.setBounds(800, 300, 120, 40);
+		removeEvent.setBounds(270, 520, 120, 40);
 		add(removeEvent);
+		
+		equipment = new JButton("Add Equipment");
+		equipment.setBounds(800, 100, 120, 40);
+		add(equipment);
+		
+		hallArrangement = new JButton("Arangement");
+		hallArrangement.setBounds(800, 200, 120, 40);
+		add(hallArrangement);
+		
 		
 		eventsTable = new JTable(new DefaultTableModel(data, eventTableColumnNames));
 		eventsTable.setFillsViewportHeight(true);
 		//eventsTable.setEnabled(false);
 		scrollPane = new JScrollPane(eventsTable);
-		add(scrollPane).setBounds(10, 100, 755, 500);
+		add(scrollPane).setBounds(10, 100, 755, 400);
 		
 		//events and actions
-		
+		equipment.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PEquipment pEquipment = new PEquipment();
+				PPanelControler.showNextPanel(pEquipment);
+				
+			}
+		});
 		
 	}
 }
