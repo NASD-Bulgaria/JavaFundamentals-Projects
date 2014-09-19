@@ -8,9 +8,13 @@
 /CongressCenterForm$5.class
 /CongressCenterForm.class
 /CongressCenterMain.class
+/PEquipment.class
+/PEventForm$1.class
 /PEventForm.class
 /PHallForm.class
 /PPanelControler.class
 /ScheduleForm.class
-/PEquipment.class
-/PEventForm$1.class
+/PEventForm$2.class
+/events
+/PEventForm$ValueRenderer.class
+/DataFormatUtils
