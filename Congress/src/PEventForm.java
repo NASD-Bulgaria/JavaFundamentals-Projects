@@ -21,7 +21,7 @@ import DataFormatUtils.DateEditor;
 import DataFormatUtils.DateEditorTest;
 import DataFormatUtils.DateValueRenderer;
 import DataFormatUtils.IntegerEditor;
-import events.Event;
+import events.EventYana;
 import events.EventsTableModel;
 
 public class PEventForm extends JPanel {
@@ -134,10 +134,10 @@ public class PEventForm extends JPanel {
 		add(hallArrangement);
 
 		// Creating editable jTable for events with dummy data
-		Event row1 = new Event("Party", 1, new Date(), new Date(), "party",
+		EventYana row1 = new EventYana("Party", 1, new Date(), new Date(), "party",
 				"Boss b-day");
 		// build the list
-		List<Event> eventList = new ArrayList<Event>();
+		List<EventYana> eventList = new ArrayList<EventYana>();
 		eventList.add(row1);
 
 		// create the model

@@ -17,14 +17,14 @@ public class EventsTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final List<Event> eventList;
+	private final List<EventYana> eventList;
 
 	private final String[] columnNames = new String[] {"Name", "Duration", "Start Date", "End Date", "Type", "Description"};
 	
 	private final Class[] columnClass = new Class[] { String.class, Integer.class, Date.class, Date.class, 
 			String.class,  String.class};
 
-	public EventsTableModel(List<Event> eventList) {
+	public EventsTableModel(List<EventYana> eventList) {
 		this.eventList = eventList;
 	}
 
@@ -50,7 +50,7 @@ public class EventsTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Event row = eventList.get(rowIndex);
+		EventYana row = eventList.get(rowIndex);
 		if (0 == columnIndex) {
 			return row.getName();
 		} else if (1 == columnIndex) {
@@ -74,7 +74,7 @@ public class EventsTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		Event row = eventList.get(rowIndex);
+		EventYana row = eventList.get(rowIndex);
 		if (0 == columnIndex) {
 			row.setName((String) aValue);
 		} else if (1 == columnIndex) {
