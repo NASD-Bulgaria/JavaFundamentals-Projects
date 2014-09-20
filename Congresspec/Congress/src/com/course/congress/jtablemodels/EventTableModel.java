@@ -1,30 +1,29 @@
-package events;
+package com.course.congress.jtablemodels;
 
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
+import com.course.congress.objects.Event;
 
 /**
  * This class is used for validating data in events jTable.
- * @author Yana
  *
  */
-public class EventsTableModel extends AbstractTableModel {
+public class EventTableModel extends AbstractTableModel {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	private final List<Event> eventList;
+	private final String[] columnNames = new String[] {"Name", "Duration (# of days)", "Start Date", "End Date", "Type", "Description"};
+	private final Class[] columnClass = new Class[] { String.class, Integer.class, Date.class, Date.class, String.class,  String.class};
 
-	private final List<EventYana> eventList;
-
-	private final String[] columnNames = new String[] {"Name", "Duration", "Start Date", "End Date", "Type", "Description"};
-	
-	private final Class[] columnClass = new Class[] { String.class, Integer.class, Date.class, Date.class, 
-			String.class,  String.class};
-
-	public EventsTableModel(List<EventYana> eventList) {
+	public EventTableModel(List<Event> eventList) {
 		this.eventList = eventList;
 	}
 
@@ -50,7 +49,7 @@ public class EventsTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		EventYana row = eventList.get(rowIndex);
+		Event row = eventList.get(rowIndex);
 		if (0 == columnIndex) {
 			return row.getName();
 		} else if (1 == columnIndex) {
@@ -69,12 +68,15 @@ public class EventsTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		if (columnIndex==1){
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		EventYana row = eventList.get(rowIndex);
+		Event row = eventList.get(rowIndex);
 		if (0 == columnIndex) {
 			row.setName((String) aValue);
 		} else if (1 == columnIndex) {
@@ -88,7 +90,7 @@ public class EventsTableModel extends AbstractTableModel {
 		} else if (5 == columnIndex){
 			row.setDescription((String) aValue);
 		}
-		
+		 fireTableCellUpdated(rowIndex, columnIndex);
 	}
 	
 }

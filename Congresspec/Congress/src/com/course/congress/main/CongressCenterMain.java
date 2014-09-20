@@ -12,7 +12,7 @@ public class CongressCenterMain {
 	public static void main(String[] args) {
 		CongressCenterForm mainPanel = PPanelControler.getMainPanel();
 	    mainPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    mainPanel.setSize(1200, 1200);
+	    mainPanel.setSize(1200, 700);
 	    mainPanel.setBackground(Color.GRAY);
 	    mainPanel.setVisible(true);
 	}

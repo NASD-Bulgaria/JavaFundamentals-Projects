@@ -1,10 +1,8 @@
 package com.course.congress.controlers;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.course.congress.datastorage.DataStorage;
 import com.course.congress.objects.Event;
-import com.course.congress.objects.Schedule;
 
 public class SchedulesControler {
 	

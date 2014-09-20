@@ -17,6 +17,22 @@ public class Event implements Serializable {
 	private ArrayList<Equipment> equipments;
 	private HallArrangement arrangement;
 	
+	public Event(String iD, String name, int duration, Date startDate,
+			Date endDate, String type, String description, String hallID,
+			ArrayList<Equipment> equipments, HallArrangement arrangement) {
+		super();
+		ID = iD;
+		this.name = name;
+		this.duration = duration;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.type = type;
+		this.description = description;
+		this.hallID = hallID;
+		this.equipments = equipments;
+		this.arrangement = arrangement;
+	}
+	
 	public String getID() {
 		return ID;
 	}
