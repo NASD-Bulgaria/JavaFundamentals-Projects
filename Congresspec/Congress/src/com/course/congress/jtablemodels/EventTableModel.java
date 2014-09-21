@@ -3,12 +3,7 @@ package com.course.congress.jtablemodels;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 
 import com.course.congress.objects.Event;
 
@@ -99,7 +94,6 @@ public class EventTableModel extends AbstractTableModel {
 	}
 	
 	public void removeRow(int rowIndex) {
-	    //Event rowToRemove = eventList.get(rowIndex);
 	    eventList.remove(rowIndex);
 	    fireTableRowsDeleted(rowIndex, rowIndex);
 	}

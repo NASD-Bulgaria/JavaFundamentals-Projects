@@ -142,8 +142,7 @@ public class PEventForm extends JPanel {
 		add(hallArrangement);
 
 		// Creating editable jTable for events with dummy data
-		Event row1 = new Event(null,"Party", 1, new Date(), new Date(), "party",
-				"Boss b-day", null, null, null);
+		Event row1 = new Event(null,"Party", 1, new Date(), new Date(), "party", "Boss b-day", null, null, null);
 		// build the list
 		List<Event> eventList = new ArrayList<Event>();
 		eventList.add(row1);
@@ -176,17 +175,24 @@ public class PEventForm extends JPanel {
 				Date startDateText = (Date) datePickerStartDate.getModel().getValue();
 				Date endDateText = (Date) datePickerEndDate.getModel().getValue();
 				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24));
+				String typeText = eventType.getText();
+				String description = eventDescription.getText();
 				//checking if end date is after start date
-				if (endDateText.after(startDateText)){
-					String type = eventType.getText();
-					String description = eventDescription.getText();
-					Event event = new Event(null, eventNameText, durationText, startDateText, endDateText, type, description, null, null, null);
-					eventTableModel.addRow(event);
-				} else {
+				if (!endDateText.after(startDateText)){
 					JOptionPane.showMessageDialog(null, "End date must be after start date!");
+				} else if (eventNameText=="" || eventNameText == null || eventNameText.isEmpty()){
+					JOptionPane.showMessageDialog(null, "Please enter event name!");
+				} else if (typeText == "" || typeText == null || typeText.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Please enter event type!");
+				} else {
+					Event event = new Event(null, eventNameText, durationText, startDateText, endDateText, typeText, description, null, null, null);
+					eventTableModel.addRow(event);
+					eventName.setText("");
+					dateModelStartDate.setDate(2014, 8, 24);
+					dateModelEndDate.setDate(2014, 8, 24);
+					eventType.setText("");
+					eventDescription.setText("");
 				}
-				//TODO: clear fields after data is imported
-				//TODO: check for empty textboxes
 			}
 		});
 		
@@ -206,12 +212,8 @@ public class PEventForm extends JPanel {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (e.getType() == TableModelEvent.UPDATE) {
-					System.out.println("Cell "
-							+ e.getFirstRow()
-							+ ", "
-							+ e.getColumn()
-							+ " changed. The new value: "
-							+ eventsTable.getModel().getValueAt(
+					System.out.println("Cell " + e.getFirstRow() + ", " + e.getColumn()
+							+ " changed. The new value: " + eventsTable.getModel().getValueAt(
 									e.getFirstRow(), e.getColumn()));
 					int row = e.getFirstRow();
 					int column = e.getColumn();
@@ -219,22 +221,21 @@ public class PEventForm extends JPanel {
 						TableModel model = eventsTable.getModel();
 						Date startDate = ((Date) model.getValueAt(row, 2));
 						Date endDate = ((Date) model.getValueAt(row, 3));
-						int days = (int) ((endDate.getTime() - startDate
-								.getTime()) / (1000 * 60 * 60 * 24));
-						model.setValueAt(days, row, 1);
+						int days = (int) ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+						if (days < 0 && column == 3) {
+							JOptionPane.showMessageDialog(null,	"End date must be after start date!");
+							model.setValueAt(startDate, row, column);
+						} else if (days < 0 && column == 2){
+							JOptionPane.showMessageDialog(null,	"End date must be after start date!");
+							model.setValueAt(endDate, row, column);
+						} else {
+							model.setValueAt(days, row, 1);
+						}
 					}
 				}
 			}
 		});
 		
-		addEvent.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				
-			}
-		});
 	}
 	
 	/**
@@ -242,16 +243,9 @@ public class PEventForm extends JPanel {
 	 * @param table
 	 */
 	public void setTableAlignment(JTable table) {
-		// table header alignment
-		/*JTableHeader header = table.getTableHeader();
-		DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) table
-				.getTableHeader().getDefaultRenderer();
-		header.setDefaultRenderer(renderer);
-		renderer.setHorizontalAlignment(JLabel.CENTER);*/
-
 		// table content alignment
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment(JLabel.LEFT);
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 		//sets the alignment for integer columns only
 		table.setDefaultRenderer(Integer.class, centerRenderer);
 	}
