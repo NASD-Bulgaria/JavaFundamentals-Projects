@@ -212,24 +212,34 @@ public class PEventForm extends JPanel {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (e.getType() == TableModelEvent.UPDATE) {
-					System.out.println("Cell " + e.getFirstRow() + ", " + e.getColumn()
-							+ " changed. The new value: " + eventsTable.getModel().getValueAt(
+					System.out.println("Cell "
+							+ e.getFirstRow()
+							+ ", "
+							+ e.getColumn()
+							+ " changed. The new value: "
+							+ eventsTable.getModel().getValueAt(
 									e.getFirstRow(), e.getColumn()));
 					int row = e.getFirstRow();
 					int column = e.getColumn();
+					TableModel model = eventsTable.getModel();
 					if (column == 2 || column == 3) {
-						TableModel model = eventsTable.getModel();
-						Date startDate = ((Date) model.getValueAt(row, 2));
-						Date endDate = ((Date) model.getValueAt(row, 3));
-						int days = (int) ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-						if (days < 0 && column == 3) {
-							JOptionPane.showMessageDialog(null,	"End date must be after start date!");
-							model.setValueAt(startDate, row, column);
-						} else if (days < 0 && column == 2){
-							JOptionPane.showMessageDialog(null,	"End date must be after start date!");
-							model.setValueAt(endDate, row, column);
+						if (eventsTable.getModel().getValueAt(e.getFirstRow(),
+								e.getColumn()) != null) {
+							Date startDate = ((Date) model.getValueAt(row, 2));
+							Date endDate = ((Date) model.getValueAt(row, 3));
+							int days = (int) ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+							if (days < 0 && column == 3) {
+								JOptionPane.showMessageDialog(null,	"End date must be after start date!");
+								model.setValueAt(startDate, row, column);
+							} else if (days < 0 && column == 2) {
+								JOptionPane.showMessageDialog(null, "End date must be after start date!");
+								model.setValueAt(endDate, row, column);
+							} else {
+								model.setValueAt(days, row, 1);
+							}
 						} else {
-							model.setValueAt(days, row, 1);
+							JOptionPane.showMessageDialog(null, "This value can not be empty!");
+							model.setValueAt(datePickerStartDate.getModel().getValue(), row, column);
 						}
 					}
 				}

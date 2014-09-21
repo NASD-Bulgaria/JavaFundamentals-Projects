@@ -10,17 +10,14 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import com.course.congress.controlers.PPanelControler;
+import com.course.congress.pannels.PAddScheduleForm;
 import com.course.congress.pannels.PEventForm;
 import com.course.congress.pannels.PHallForm;
 
 public class CongressCenterForm extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private JDesktopPane jDesktopPane;
@@ -78,14 +75,12 @@ public class CongressCenterForm extends JFrame {
 			}
 		});
 		
-//		showSchedule.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent arg0) {
-//				if(!scheduleForm.isVisible()){
-//					jDesktopPane.add(scheduleForm);
-//					scheduleForm.setVisible(true);
-//				}
-//			}
-//		});
+		showSchedule.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PAddScheduleForm addScheduleForm = new PAddScheduleForm();
+				PPanelControler.showPanel(addScheduleForm);
+			}
+		});
 		
 		
 //		aboutMenuItem.addActionListener(new ActionListener() {
