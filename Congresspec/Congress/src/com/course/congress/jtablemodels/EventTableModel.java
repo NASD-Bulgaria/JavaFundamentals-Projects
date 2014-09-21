@@ -93,4 +93,14 @@ public class EventTableModel extends AbstractTableModel {
 		 fireTableCellUpdated(rowIndex, columnIndex);
 	}
 	
+	public void addRow(Event event) {
+		eventList.add(event);
+		fireTableRowsInserted(eventList.size() - 1, eventList.size() - 1);
+	}
+	
+	public void removeRow(int rowIndex) {
+	    //Event rowToRemove = eventList.get(rowIndex);
+	    eventList.remove(rowIndex);
+	    fireTableRowsDeleted(rowIndex, rowIndex);
+	}
 }

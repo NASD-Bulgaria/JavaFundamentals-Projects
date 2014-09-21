@@ -2,6 +2,10 @@ package com.course.congress.pannels;
 
 import java.awt.Color;
 
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
+
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 
 import java.awt.event.ActionEvent;
@@ -12,15 +16,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -36,7 +39,6 @@ public class PEventForm extends JPanel {
 	private JScrollPane scrollPane;
 
 	private JLabel name;
-	private JLabel duration;
 	private JLabel startDate;
 	private JLabel endDate;
 	private JLabel type;
@@ -44,9 +46,6 @@ public class PEventForm extends JPanel {
 	private JLabel promotionalMaterials;
 
 	private JTextField eventName;
-	private JTextField eventDuration;
-	private JTextField eventStartDate;
-	private JTextField eventEndDate;
 	private JTextField eventType;
 	private JTextArea eventDescription;
 	// set the equipment chooser
@@ -55,13 +54,21 @@ public class PEventForm extends JPanel {
 	// that u want to choose them
 
 	private JButton addEvent;
-	private JButton editEvent;
 	private JButton removeEvent;
 	private JButton equipment;
 	private JButton hallArrangement;
+	
+	private JDatePickerImpl datePickerStartDate;
+	private UtilDateModel dateModelStartDate;
+	private JDatePanelImpl datePanelStartDate;
+	
+	private JDatePickerImpl datePickerEndDate;
+	private UtilDateModel dateModelEndDate; 
+	private JDatePanelImpl datePanelEndDate; 
 
 	private JTable eventsTable;
-	private TableModelListener tableModelListener;
+	private EventTableModel eventTableModel;
+
 	public PEventForm() {
 
 		setLayout(null);
@@ -76,43 +83,42 @@ public class PEventForm extends JPanel {
 		eventName.setBounds(50, 10, 130, 20);
 		add(eventName);
 
-		duration = new JLabel("Duration");
-		duration.setBounds(190, 10, 50, 20);
-		add(duration);
-		eventDuration = new JTextField();
-		eventDuration.setBounds(245, 10, 130, 20);
-		add(eventDuration);
-
 		startDate = new JLabel("Start Date");
-		startDate.setBounds(385, 10, 60, 20);
+		startDate.setBounds(190, 10, 60, 20);
 		add(startDate);
-		eventStartDate = new JTextField();
-		eventStartDate.setBounds(445, 10, 130, 20);
-		add(eventStartDate);
+		dateModelStartDate = new UtilDateModel();
+		dateModelStartDate.setDate(2014, 8, 24);
+		dateModelStartDate.setSelected(true);
+		datePanelStartDate = new JDatePanelImpl(dateModelStartDate);
+		datePickerStartDate = new JDatePickerImpl(datePanelStartDate);
+		datePickerStartDate.setBounds(255, 10, 130, 20);
+		add(datePickerStartDate);
 
 		endDate = new JLabel("End Date");
-		endDate.setBounds(585, 10, 60, 20);
+		endDate.setBounds(395, 10, 60, 20);
 		add(endDate);
-		eventEndDate = new JTextField();
-		eventEndDate.setBounds(640, 10, 130, 20);
-		add(eventEndDate);
+		dateModelEndDate = new UtilDateModel();
+		dateModelEndDate.setDate(2014, 8, 24);
+		dateModelEndDate.setSelected(true);
+		datePanelEndDate = new JDatePanelImpl(dateModelEndDate);
+		datePickerEndDate = new JDatePickerImpl(datePanelEndDate);
+		datePickerEndDate.setBounds(450, 10, 130, 20);
+		add(datePickerEndDate);
 
 		type = new JLabel("Type");
-		type.setBounds(10, 40, 40, 20);
+		type.setBounds(590, 10, 40, 20);
 		add(type);
 		eventType = new JTextField();
-		eventType.setBounds(50, 40, 130, 20);
+		eventType.setBounds(620, 10, 145, 20);
 		add(eventType);
 
 		description = new JLabel("Description");
-		description.setBounds(190, 40, 70, 20);
+		description.setBounds(10, 40, 70, 20);
 		add(description);
 		eventDescription = new JTextArea();
-		Border border = BorderFactory.createLineBorder(Color.GRAY);
-		eventDescription.setBorder(BorderFactory.createCompoundBorder(border,
-				BorderFactory.createEmptyBorder(265, 40, 505, 20)));
-		eventDescription.setBounds(265, 40, 505, 20);
-		add(eventDescription);
+		JScrollPane sp = new JScrollPane(eventDescription); 
+		sp.setBounds(80, 40, 685, 40);
+		add(sp);
 
 		addEvent = new JButton("Add Event");
 		addEvent.setBounds(800, 10, 120, 40);
@@ -143,9 +149,9 @@ public class PEventForm extends JPanel {
 		eventList.add(row1);
 
 		// create the model
-		EventTableModel model = new EventTableModel(eventList);
+		eventTableModel = new EventTableModel(eventList);
 		// create the table
-		eventsTable = new JTable(model);
+		eventsTable = new JTable(eventTableModel);
 		setTableAlignment(eventsTable);
 		eventsTable.setFillsViewportHeight(true);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
@@ -160,6 +166,39 @@ public class PEventForm extends JPanel {
 				PEquipment pEquipment = new PEquipment();
 				PPanelControler.showNextPanel(pEquipment);
 
+			}
+		});
+		
+		addEvent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String eventNameText = eventName.getText();
+				Date startDateText = (Date) datePickerStartDate.getModel().getValue();
+				Date endDateText = (Date) datePickerEndDate.getModel().getValue();
+				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24));
+				//checking if end date is after start date
+				if (endDateText.after(startDateText)){
+					String type = eventType.getText();
+					String description = eventDescription.getText();
+					Event event = new Event(null, eventNameText, durationText, startDateText, endDateText, type, description, null, null, null);
+					eventTableModel.addRow(event);
+				} else {
+					JOptionPane.showMessageDialog(null, "End date must be after start date!");
+				}
+				//TODO: clear fields after data is imported
+				//TODO: check for empty textboxes
+			}
+		});
+		
+		removeEvent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// check for selected row first
+		        if (eventsTable.getSelectedRow() != -1) {
+		        	eventTableModel.removeRow(eventsTable.getSelectedRow());
+		        } else {
+		        	JOptionPane.showMessageDialog(null, "Please select event from the table first.");
+		        }
 			}
 		});
 		
