@@ -3,9 +3,7 @@ package com.course.congress.main;
 import java.awt.Color;
 
 import javax.swing.JFrame;
-
 import com.course.congress.controlers.PPanelControler;
-
 
 public class CongressCenterMain {
 
