@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -68,29 +69,33 @@ public class PAddScheduleForm extends JPanel {
 		hallNameLabel = new JLabel("Hall");
 		hallNameLabel.setBounds(10, 10, 30, 20);
 		add(hallNameLabel);
-		hallCombo = new JComboBox(hallList.toArray());
+		hallCombo = new JComboBox(new DefaultComboBoxModel(hallList.toArray()));
+		hallCombo.insertItemAt("Please choose hall..", 0);
+		hallCombo.setSelectedIndex(0);
 		hallCombo.setMaximumRowCount(3);
-		hallCombo.setBounds(40, 10, 120, 20);
+		hallCombo.setBounds(40, 10, 140, 20);
 		add(hallCombo);
 		
 		dateLabel = new JLabel("Choose date");
-		dateLabel.setBounds(180, 10, 100, 20);
+		dateLabel.setBounds(200, 10, 100, 20);
 		add(dateLabel);
 		dateModel = new UtilDateModel();
 		dateModel.setDate(2014, 8, 24);
-		dateModel.setSelected(true);
+		dateModel.setSelected(false);
 		datePanel = new JDatePanelImpl(dateModel);
+		datePanel.setEnabled(false);
 		datePicker = new JDatePickerImpl(datePanel);
-		datePicker.setBounds(260, 10, 130, 20);
+		datePicker.setBounds(280, 10, 130, 20);
 		datePicker.setEnabled(false);
 		add(datePicker);
 		
 		eventNameLabel = new JLabel("Event");
-		eventNameLabel.setBounds(410, 10, 50, 20);
+		eventNameLabel.setBounds(430, 10, 50, 20);
 		add(eventNameLabel);
 		eventCombo = new JComboBox();
+		eventCombo.setEnabled(false);
 		eventCombo.setMaximumRowCount(3);
-		eventCombo.setBounds(450, 10, 120, 20);
+		eventCombo.setBounds(470, 10, 120, 20);
 		add(eventCombo);
 		
 		prevMonth = new JButton("<< Sep");
@@ -184,5 +189,9 @@ public class PAddScheduleForm extends JPanel {
 	        table.setPreferredScrollableViewportSize(table.getPreferredSize());
 	        add(scrollPane).setBounds(10, 90, 560, 400);
 	}
+}
+
+class ComboBoxObjectsModel extends DefaultComboBoxModel<Object>{
+	
 }
 

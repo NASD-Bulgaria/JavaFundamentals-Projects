@@ -49,4 +49,10 @@ public class Hall implements Serializable {
 		this.floor = floor;
 	}
 	
+	@Override
+	public String toString(){
+		return this.name;
+	}
+	
+	
 }
