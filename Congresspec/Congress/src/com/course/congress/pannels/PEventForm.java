@@ -30,6 +30,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
 import com.course.congress.controlers.PPanelControler;
+import com.course.congress.datastorage.DataStorage;
 import com.course.congress.jtablemodels.DateValueRenderer;
 import com.course.congress.jtablemodels.EventTableModel;
 import com.course.congress.objects.Event;
@@ -142,11 +143,16 @@ public class PEventForm extends JPanel {
 		add(hallArrangement);
 
 		// Creating editable jTable for events with dummy data
-		Event row1 = new Event(null,"Party", 1, new Date(), new Date(), "party", "Boss b-day", null, null, null);
 		// build the list
 		List<Event> eventList = new ArrayList<Event>();
-		eventList.add(row1);
-
+		
+		Event[] events = DataStorage.getEvents();
+		if(events != null) {
+			for (int i = 0; i < events.length; i++) {
+				eventList.add(events[i]);
+			}
+		}
+		
 		// create the model
 		eventTableModel = new EventTableModel(eventList);
 		// create the table
@@ -187,6 +193,9 @@ public class PEventForm extends JPanel {
 				} else {
 					Event event = new Event(null, eventNameText, durationText, startDateText, endDateText, typeText, description, null, null, null);
 					eventTableModel.addRow(event);
+					//add new event in data storage
+					DataStorage.addNewEvent(event);
+					
 					eventName.setText("");
 					dateModelStartDate.setDate(2014, 8, 24);
 					dateModelEndDate.setDate(2014, 8, 24);

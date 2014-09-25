@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import com.course.congress.datastorage.DataStorage;
 import com.course.congress.jtablemodels.HallTableModel;
 import com.course.congress.objects.Hall;
 
@@ -71,12 +72,16 @@ public class PHallForm extends JPanel {
 		add(hallFloor);
 
 		// Creating editable jTable for halls with dummy data
-		Hall row1 = new Hall(null, "Hall 1", 2, 1);
-		Hall row2 = new Hall(null, "Hall 2", 5, 1);
+//		Hall row1 = new Hall(null, "Hall 1", 2, 1);
+//		Hall row2 = new Hall(null, "Hall 2", 5, 1);
 		// build the list
 		List<Hall> hallList = new ArrayList<Hall>();
-		hallList.add(row1);
-		hallList.add(row2);
+		Hall[] halls = DataStorage.getHalls();
+		if(halls != null) {
+			for (int i = 0; i < halls.length; i++) {
+				hallList.add(halls[i]);
+			}			
+		}
 
 		// create the model
 		hallTableModel = new HallTableModel(hallList);
@@ -114,6 +119,9 @@ public class PHallForm extends JPanel {
 				} else {
 					Hall hall = new Hall(null, hallNameText, capacityText, floorText);
 					hallTableModel.addRow(hall);
+					//add to data repository
+					DataStorage.addNewHall(hall);
+					
 					//clear fields
 					hallName.setText("");
 					hallCapacity.setValue(new Integer(150));

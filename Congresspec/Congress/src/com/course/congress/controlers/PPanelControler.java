@@ -1,12 +1,15 @@
 package com.course.congress.controlers;
 
 import java.awt.Color;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JPanel;
 
 import com.course.congress.main.CongressCenterForm;
+import com.course.congress.pannels.PHallForm;
 
 
 public class PPanelControler {
@@ -25,6 +28,20 @@ public class PPanelControler {
 		panel.setSize(1000, 650);
 		mainPanel.add(jDesktopPane);
 		mainPanel.revalidate();
+	}
+	
+	public static void refreshCurrentPanel() {
+		if(panels.size() > 0) {
+			Class<?> clazz;
+			try {
+				clazz = Class.forName(panels.get(0).getClass().getCanonicalName());
+				Constructor<?> ctor = clazz.getConstructor();
+				JPanel object = (JPanel) ctor.newInstance();
+				showPanel(object);			
+			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static void showPanel(JPanel panel) {
