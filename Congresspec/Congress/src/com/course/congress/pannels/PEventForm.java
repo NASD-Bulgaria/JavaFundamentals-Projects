@@ -24,6 +24,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -132,6 +134,7 @@ public class PEventForm extends JPanel {
 
 		removeEvent = new JButton("Remove Event");
 		removeEvent.setBounds(800, 460, 120, 40);
+		removeEvent.setEnabled(false);
 		add(removeEvent);
 
 		equipment = new JButton("Add Equipment");
@@ -214,6 +217,7 @@ public class PEventForm extends JPanel {
 		        } else {
 		        	JOptionPane.showMessageDialog(null, "Please select event from the table first.");
 		        }
+		        removeEvent.setEnabled(false);	
 			}
 		});
 		
@@ -252,6 +256,15 @@ public class PEventForm extends JPanel {
 						}
 					}
 				}
+			}
+		});
+		
+		eventsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+		        	removeEvent.setEnabled(true);				
+		        } 
 			}
 		});
 		

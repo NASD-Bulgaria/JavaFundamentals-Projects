@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import com.course.congress.datastorage.DataStorage;
@@ -71,9 +73,7 @@ public class PHallForm extends JPanel {
 		hallFloor.setBounds(400, 10, 80, 20);
 		add(hallFloor);
 
-		// Creating editable jTable for halls with dummy data
-//		Hall row1 = new Hall(null, "Hall 1", 2, 1);
-//		Hall row2 = new Hall(null, "Hall 2", 5, 1);
+		// Creating editable jTable for halls with data from file
 		// build the list
 		List<Hall> hallList = new ArrayList<Hall>();
 		Hall[] halls = DataStorage.getHalls();
@@ -102,6 +102,7 @@ public class PHallForm extends JPanel {
 
 		removeHall = new JButton("Remove Hall");
 		removeHall.setBounds(500, 520, 110, 40);
+		removeHall.setEnabled(false);
 		add(removeHall);
 		
 		// events and actions
@@ -138,6 +139,16 @@ public class PHallForm extends JPanel {
 			        } else {
 			        	JOptionPane.showMessageDialog(null, "Please select hall from the table first.");
 			        }
+				removeHall.setEnabled(false);	
+			}
+		});
+		
+		hallsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+		        	removeHall.setEnabled(true);				
+		        } 
 			}
 		});
 	}
