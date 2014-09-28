@@ -1,20 +1,25 @@
 package com.course.congress.jtablemodels;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
 import com.course.congress.objects.Hall;
 
 public class ScheduleTableModel extends AbstractTableModel {
 
+	private int currentMonth;
+	private int currentYear;
 	private final List<Hall> hallList;
-	private final String[] columnNames = new String[] {"Hall 1", "Hall 2", "Hall 3"};
-	private final Class[] columnClass = new Class[] { String.class, String.class, String.class};
+	private final String[] columnNames = new String[] {"Hall 0", "Hall 1", "Hall 2", "Hall 3"};
+	private final Class[] columnClass = new Class[] {String.class, String.class, String.class, String.class};
 	
-	public ScheduleTableModel(List<Hall> hallList) {
+	public ScheduleTableModel(List<Hall> hallList, int currentMonth, int currentYear) {
 		this.hallList = hallList;
+		this.currentMonth = currentMonth;
+		this.currentYear = currentYear;
 	}
 	
 	@Override
@@ -34,37 +39,44 @@ public class ScheduleTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return hallList.size();
+		Calendar mycal = new GregorianCalendar(currentYear, currentMonth, 1);
+		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		return daysInMonth;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Hall row = hallList.get(rowIndex);
+	/*	Hall row = hallList.get(rowIndex);
 		if (0 == columnIndex) {
 			return row.getName();
 		} else if (1 == columnIndex) {
 			return row.getCapacity();
 		} else if (2 == columnIndex) {
 			return row.getFloor();
-		} 
+		} */
 		return null;
 	}
 	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return true;
+		return false;
 	}
 	
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		Hall row = hallList.get(rowIndex);
-		if (0 == columnIndex) {
-			row.setName((String) aValue);
-		} else if (1 == columnIndex) {
-			row.setCapacity((Integer) aValue);
+		//Schedule row = hallList.get(rowIndex);
+		Calendar mycal = new GregorianCalendar(currentYear, currentMonth, 1);
+		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		/*if (0 == columnIndex) {
+			for (int i = 0; i < daysInMonth; i++) {
+				this.setValueAt("Date " + (i + 1),i,0);
+	        }
+		}*/ /*else if (1 == columnIndex) {
+			this.setCapacity("Event name", 0, 0);
 		} else if (2 == columnIndex) {
 			row.setFloor((Integer) aValue);
-		} 
+		} */
 		 fireTableCellUpdated(rowIndex, columnIndex);
 	}
 	
