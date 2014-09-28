@@ -4,7 +4,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -53,8 +58,12 @@ public class PAddScheduleForm extends JPanel {
 	private DefaultTableModel model;
 	private JTable table;
 	private JTable headerTable;
-	private TableRowSorter<TableModel> sorter;
 	private JScrollPane scrollPane;
+	
+	private int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+	private int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+	Calendar mycal = new GregorianCalendar(currentYear, currentMonth, 1);
+	private int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
 	
 	public PAddScheduleForm(){
 		setLayout(null);
@@ -98,24 +107,22 @@ public class PAddScheduleForm extends JPanel {
 		eventCombo.setBounds(470, 10, 120, 20);
 		add(eventCombo);
 		
-		prevMonth = new JButton("<< Sep");
-		prevMonth.setBounds(10, 70, 110, 20);
+		prevMonth = new JButton("<< " + getPrevMonth(currentMonth));
+		prevMonth.setBounds(10, 70, 130, 20);
 		add(prevMonth);
 		
-		scheduleMonthLabel = new JLabel("Schedule : October");
-		scheduleMonthLabel.setBounds(250, 70, 150, 20);
+		scheduleMonthLabel = new JLabel("Schedule : " + getCurrentMonth(currentMonth));
+		scheduleMonthLabel.setBounds(230, 70, 150, 20);
 		add(scheduleMonthLabel);
 		
-		nextMonth = new JButton("Nov >>");
-		nextMonth.setBounds(460, 70, 110, 20);
+		nextMonth = new JButton(getNextMonth(currentMonth) + " >>");
+		nextMonth.setBounds(460, 70, 130, 20);
 		add(nextMonth);
 		
-		 table = new JTable(23, 4);
+		 table = new JTable(daysInMonth, 4);
 	        for (int i = 0; i < table.getRowCount(); i++) {
-	            table.setValueAt(i, i, 0);
+	            //table.setValueAt(i, i, 0);
 	        }
-	        sorter = new TableRowSorter<TableModel>(table.getModel());
-	        table.setRowSorter(sorter);
 	        model = new DefaultTableModel() {
 
 	            private static final long serialVersionUID = 1L;
@@ -170,28 +177,72 @@ public class PAddScheduleForm extends JPanel {
 	                return component;
 	            }
 	        });
-	        table.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
-	            @Override
-	            public void sorterChanged(RowSorterEvent e) {
-	                model.fireTableDataChanged();
-	            }
-	        });
-	        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-	            @Override
-	            public void valueChanged(ListSelectionEvent e) {
-	                model.fireTableRowsUpdated(0, model.getRowCount() - 1);
-	            }
-	        });
+	       
 	        scrollPane = new JScrollPane(table);
 	        scrollPane.setRowHeaderView(headerTable);
 	        table.setPreferredScrollableViewportSize(table.getPreferredSize());
-	        add(scrollPane).setBounds(10, 90, 560, 400);
+	        add(scrollPane).setBounds(10, 90, 580, 500);
+	        
+	        prevMonth.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (currentMonth == 0){
+						currentMonth = 11;
+					} else {
+						currentMonth = currentMonth - 1;
+					}
+					scheduleMonthLabel.setText("Schedule : " + getCurrentMonth(currentMonth));
+					prevMonth.setText("<< " + getPrevMonth(currentMonth));
+					nextMonth.setText(getNextMonth(currentMonth) + " >>");
+				}
+			});
+	        
+	        nextMonth.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (currentMonth == 11){
+						currentMonth = 0;
+						currentYear = currentYear - 1;
+					} else {
+						currentMonth = currentMonth + 1;
+					}
+					scheduleMonthLabel.setText("Schedule : " + getCurrentMonth(currentMonth));
+					prevMonth.setText("<< " + getPrevMonth(currentMonth));
+					nextMonth.setText(getNextMonth(currentMonth) + " >>");
+					
+					daysInMonth =  getDaysOfMonth(currentMonth, currentYear);
+					headerTable.repaint();
+					
+				}
+			});
+	}
+
+	private String getCurrentMonth(int monthIndex) {
+		String monthString = new DateFormatSymbols().getMonths()[monthIndex];
+		return monthString;
+	}
+	
+	private String getPrevMonth(int monthIndex) {
+		if(monthIndex == 0){
+			monthIndex = 12;
+		}
+		return new DateFormatSymbols().getMonths()[monthIndex-1];
+	}
+	
+	private String getNextMonth(int monthIndex) {
+		if(monthIndex == 11){
+			monthIndex = -1;
+		}
+		return new DateFormatSymbols().getMonths()[monthIndex+1];
+		
+	}
+	
+	private int getDaysOfMonth(int monthIndex, int year){
+		Calendar mycal = new GregorianCalendar(year, monthIndex, 1);
+		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		return daysInMonth;
+		
 	}
 }
 
-class ComboBoxObjectsModel extends DefaultComboBoxModel<Object>{
-	
-}
 
