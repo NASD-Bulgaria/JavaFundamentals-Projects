@@ -1,20 +1,27 @@
 package com.course.congress.jtablemodels;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import com.course.congress.datastorage.DataStorage;
+import com.course.congress.objects.Event;
 import com.course.congress.objects.Hall;
+import com.course.congress.objects.Schedule;
 
 public class ScheduleTableModel extends AbstractTableModel {
 
 	private int currentMonth;
 	private int currentYear;
 	private final List<Hall> hallList;
-	private final String[] columnNames = new String[] {"Hall 0", "Hall 1", "Hall 2", "Hall 3"};
-	private final Class[] columnClass = new Class[] {String.class, String.class, String.class, String.class};
+	private HashMap<String, ArrayList<Event>> schedulesMap;
+	private Hall[] halls = DataStorage.getHalls();
+	//private Hall[] halls = new Hall[5];
+	private final String[] columnNames = new String[halls.length];
 	
 	public ScheduleTableModel(List<Hall> hallList, int currentMonth, int currentYear) {
 		this.hallList = hallList;
@@ -24,12 +31,15 @@ public class ScheduleTableModel extends AbstractTableModel {
 	
 	@Override
 	public String getColumnName(int column) {
+		for(int i = 0; i < halls.length; i++) {
+			columnNames[i] = halls[i].getName();
+		}
 		return columnNames[column];
 	}
 	
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		return columnClass[columnIndex];
+		return String.class;
 	}
 	
 	@Override
@@ -46,13 +56,16 @@ public class ScheduleTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-	/*	Hall row = hallList.get(rowIndex);
+		/*ArrayList<Event> eventsPerHall = schedulesMap.get(columnNames[columnIndex]);
 		if (0 == columnIndex) {
-			return row.getName();
+			for (Event event : eventsPerHall) {
+				event.getName();
+			}
+			return "test1";
 		} else if (1 == columnIndex) {
-			return row.getCapacity();
+			return "test2";
 		} else if (2 == columnIndex) {
-			return row.getFloor();
+			return "test3";
 		} */
 		return null;
 	}

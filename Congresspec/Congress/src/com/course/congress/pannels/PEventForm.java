@@ -183,7 +183,7 @@ public class PEventForm extends JPanel {
 				String eventNameText = eventName.getText();
 				Date startDateText = (Date) datePickerStartDate.getModel().getValue();
 				Date endDateText = (Date) datePickerEndDate.getModel().getValue();
-				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24));
+				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24) + 1);
 				String typeText = eventType.getText();
 				String description = eventDescription.getText();
 				//checking if end date is after start date

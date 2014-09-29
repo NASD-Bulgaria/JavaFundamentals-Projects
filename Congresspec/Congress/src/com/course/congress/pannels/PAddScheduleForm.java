@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -131,8 +132,8 @@ public class PAddScheduleForm extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (currentMonth == 0) {
 					currentMonth = 11;
+					currentYear = currentYear - 1;
 				} else {
-					//TODO: change the year as well
 					currentMonth = currentMonth - 1;
 				}
 				scheduleMonthLabel.setText("Schedule : "
@@ -156,9 +157,8 @@ public class PAddScheduleForm extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (currentMonth == 11) {
 					currentMonth = 0;
-					currentYear = currentYear - 1;
+					currentYear = currentYear + 1;
 				} else {
-					//TODO: change the year as well
 					currentMonth = currentMonth + 1;
 				}
 				scheduleMonthLabel.setText("Schedule : "
@@ -166,6 +166,32 @@ public class PAddScheduleForm extends JPanel {
 				prevMonth.setText("<< " + getPrevMonth(currentMonth));
 				nextMonth.setText(getNextMonth(currentMonth) + " >>");
 
+				// change the displayed dates
+				List<String> dates = new ArrayList<String>();
+				for (int i = 0; i < getDaysOfMonth(currentMonth, currentYear); i++) {
+					dates.add("Date " + (i + 1));
+				}				
+				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
+				table.setModel(new ScheduleTableModel(new ArrayList<Hall>(), currentMonth, currentYear));
+			}
+		});
+		
+		datePicker.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Date newDate = (Date) datePicker.getModel().getValue();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(newDate);
+				int month = cal.get(Calendar.MONTH);
+				int year = cal.get(Calendar.YEAR);
+				
+				currentMonth = month;
+				currentYear = year;
+				
+				scheduleMonthLabel.setText("Schedule : "
+						+ getCurrentMonth(currentMonth)  + " " + currentYear);
+				prevMonth.setText("<< " + getPrevMonth(currentMonth));
+				nextMonth.setText(getNextMonth(currentMonth) + " >>");
 				// change the displayed dates
 				List<String> dates = new ArrayList<String>();
 				for (int i = 0; i < getDaysOfMonth(currentMonth, currentYear); i++) {
