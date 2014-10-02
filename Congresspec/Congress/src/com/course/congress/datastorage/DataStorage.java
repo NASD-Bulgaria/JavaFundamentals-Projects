@@ -19,6 +19,16 @@ public class DataStorage {
 	
 	public static void initFromFile(String fileName) throws ClassNotFoundException, IOException {
 		data = Serialization.load("save file.ser");
+		initData();
+	}
+
+	private static void initData() {
+		if(data.getEvents() != null)
+		for (int i = 0; i < data.getEvents().length; i++) {
+			if(data.getEvents()[i].getArrangement() != null) {
+				data.getEvents()[i].getArrangement().init();
+			}
+		}
 	}
 
 	public static void setSchedules(Schedule schedule) {
@@ -34,7 +44,7 @@ public class DataStorage {
 	public static ArrayList<Equipment> getEquipments(Event event) {
 		Event[] events = data.getEvents();
 		for (int i = 0; i < events.length; i++) {
-			if(events[i].getID().equals(event.getID())) {
+			if(events[i].getID() == event.getID()) {
 				return events[i].getEquipments();
 			}
 		}
@@ -75,15 +85,33 @@ public class DataStorage {
 		data.setEvents(newEvents);
 	}
 	
-	public static void addNewEquipment(Equipment equipment, String eventID) {
+	public static void addNewEquipment(Equipment equipment, int eventID) {
 		Event[] events = data.getEvents();
 		if(events != null) {
 			for (int i = 0; i < events.length; i++) {
-				if (events[i].getID().equals(eventID)) {
+				if (events[i].getID() == eventID ) {
 					events[i].getEquipments().add(equipment);
 				}
 			}			
 		}
+	}
+
+	public static void removeEvent(int id) {
+		Event[] newEvents;
+		if(data.getEvents().length-1 < 1) {
+			newEvents = null;			
+		} else {
+			newEvents = new Event[data.getEvents().length-1];
+		}
+		int newEventsCounter = 0;
+		for(int i =0; i < data.getEvents().length; i++) {
+			if(data.getEvents()[i].getID() == id) {
+				
+			} else {
+				newEvents[newEventsCounter++] = data.getEvents()[i];
+			}
+		}
+		data.setEvents(newEvents);
 	}
 	
 }

@@ -31,6 +31,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.course.congress.controlers.DataFlowControler;
 import com.course.congress.controlers.PPanelControler;
 import com.course.congress.datastorage.DataStorage;
 import com.course.congress.jtablemodels.DateValueRenderer;
@@ -73,7 +74,7 @@ public class PEventForm extends JPanel {
 	private EventTableModel eventTableModel;
 
 	public PEventForm() {
-
+		final PEventForm currentPanel = this;
 		setLayout(null);
 		setSize(1000, 1000);
 		setBackground(Color.GRAY);
@@ -139,10 +140,12 @@ public class PEventForm extends JPanel {
 
 		equipment = new JButton("Add Equipment");
 		equipment.setBounds(800, 100, 120, 40);
+		equipment.setEnabled(false);
 		add(equipment);
 
 		hallArrangement = new JButton("Arangement");
 		hallArrangement.setBounds(800, 150, 120, 40);
+		hallArrangement.setEnabled(false);
 		add(hallArrangement);
 
 		// Creating editable jTable for events with dummy data
@@ -173,7 +176,6 @@ public class PEventForm extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				PEquipment pEquipment = new PEquipment();
 				PPanelControler.showNextPanel(pEquipment);
-
 			}
 		});
 		
@@ -194,7 +196,18 @@ public class PEventForm extends JPanel {
 				} else if (typeText == "" || typeText == null || typeText.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Please enter event type!");
 				} else {
-					Event event = new Event(null, eventNameText, durationText, startDateText, endDateText, typeText, description, null, null, null);
+					int maxID = 0;
+					Event event;
+					if(DataStorage.getEvents() == null) {
+						event = new Event(1, eventNameText, durationText, startDateText, endDateText, typeText, description, null, null, null);
+					} else {
+						for (int i = 1; i < DataStorage.getEvents().length; i++) {
+							if(DataStorage.getEvents()[i].getID() > DataStorage.getEvents()[maxID].getID()) {
+								maxID = i;
+							}
+						}						
+						event = new Event(DataStorage.getEvents()[maxID].getID() + 1, eventNameText, durationText, startDateText, endDateText, typeText, description, null, null, null);
+					}
 					eventTableModel.addRow(event);
 					//add new event in data storage
 					DataStorage.addNewEvent(event);
@@ -213,11 +226,15 @@ public class PEventForm extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// check for selected row first
 		        if (eventsTable.getSelectedRow() != -1) {
+		        	DataStorage.removeEvent(eventTableModel.getRowObject(eventsTable.getSelectedRow()).getID());
 		        	eventTableModel.removeRow(eventsTable.getSelectedRow());
 		        } else {
 		        	JOptionPane.showMessageDialog(null, "Please select event from the table first.");
 		        }
 		        removeEvent.setEnabled(false);	
+		        equipment.setEnabled(false);
+		        hallArrangement.setEnabled(false);
+		        currentPanel.repaint();
 			}
 		});
 		
@@ -263,8 +280,29 @@ public class PEventForm extends JPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
-		        	removeEvent.setEnabled(true);				
+		        	removeEvent.setEnabled(true);
+		        	equipment.setEnabled(true);
+		        	hallArrangement.setEnabled(true);
+		        	if(DataStorage.getEvents() != null) {
+		        		for(int i=0; i<DataStorage.getEvents().length; i++) {
+		        			if(DataStorage.getEvents()[i].getID() == eventTableModel.getRowObject(e.getFirstIndex()).getID())  {
+		        				DataFlowControler.setCurrentEvent(DataStorage.getEvents()[i]);	
+		        				break;
+		        			}
+		        		}		        		
+		        	}
 		        } 
+			}
+		});
+		
+		hallArrangement.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(DataFlowControler.getCurrentEvent() != null) {
+					PArangement arangement = new PArangement();
+					PPanelControler.showNextPanel(arangement);					
+				}
 			}
 		});
 		

@@ -97,4 +97,8 @@ public class EventTableModel extends AbstractTableModel {
 	    eventList.remove(rowIndex);
 	    fireTableRowsDeleted(rowIndex, rowIndex);
 	}
+	
+	public Event getRowObject(int rowIndex) {
+		return eventList.get(rowIndex);
+	}
 }

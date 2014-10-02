@@ -3,6 +3,7 @@ package com.course.congress.pannels;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -10,7 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.course.congress.controlers.DataFlowControler;
 import com.course.congress.controlers.PPanelControler;
+import com.course.congress.datastorage.DataStorage;
+import com.course.congress.objects.Equipment;
 
 
 public class PEquipment extends JPanel{
@@ -99,6 +103,8 @@ public class PEquipment extends JPanel{
 		projector.setBounds(100, 160, 150, 20);
 		add(projector);
 		
+		initData();
+		
 		request = new JButton("Request");
 		request.setBounds(10, 190, 100, 25);
 		add(request);
@@ -113,6 +119,119 @@ public class PEquipment extends JPanel{
 			}
 		});
 		
+		request.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<Equipment> equipments = new ArrayList<Equipment>();
+				
+				setEquipmentValue("Microphones", michrophones.getText(), equipments);
+				setEquipmentValue("Sound System", soundSystem.isSelected(), equipments);
+				setEquipmentValue("Mobile Screens", mobileScreens.getText(), equipments);
+				setEquipmentValue("Additional light", additionalLighting.isSelected(), equipments);
+				setEquipmentValue("Computers", computer.getText(), equipments);
+				setEquipmentValue("Projectors", projector.getText(), equipments);
+				DataFlowControler.getCurrentEvent().setEquipments(equipments);
+				PPanelControler.showPrevPanel();
+			}
+
+			private void setEquipmentValue(String type, String value, ArrayList<Equipment> equipments) {
+				if(value.length() > 0 && !value.equals("0")) {
+					if(checkIfEqIsInArray(type, equipments)) {
+						setQuontityToEquipment(value, type, equipments);
+					} else {
+						addNewEq(value, type, equipments);
+					}
+				} else {
+					if(checkIfEqIsInArray(type, equipments)) {
+						removeEq(type, equipments);
+					}
+				}
+			}
+			
+			private void setEquipmentValue(String type, boolean value, ArrayList<Equipment> equipments) {
+				if(value) {
+					if(checkIfEqIsInArray(type, equipments)) {
+						setQuontityToEquipment("1", type, equipments);
+					} else {
+						addNewEq("1", type, equipments);
+					}
+				} else {
+					if(checkIfEqIsInArray(type, equipments)) {
+						removeEq(type, equipments);
+					}
+				}
+			}
+
+			private void removeEq(String string, ArrayList<Equipment> equipments) {
+				for(int i=0; i< equipments.size(); i++) {
+					if(equipments.get(i).getType().equals(string)) {
+						equipments.remove(i);
+						return;
+					}
+				}
+				return;
+			}
+
+			private void addNewEq(String text, String string, ArrayList<Equipment> equipments) {
+				Equipment eq = new Equipment();
+				eq.setName(string);
+				eq.setType(string);
+				eq.setQuantity(Integer.parseInt(text));
+				equipments.add(eq);
+			}
+
+			private void setQuontityToEquipment(String text, String string, ArrayList<Equipment> equipments) {
+				for(int i=0; i< equipments.size(); i++) {
+					if(equipments.get(i).getType().equals(string)) {
+						equipments.get(i).setQuantity(Integer.parseInt(text));
+					}
+				}	
+			}
+
+			private boolean checkIfEqIsInArray(String string, ArrayList<Equipment> equipments) {
+				for(int i=0; i< equipments.size(); i++) {
+					if(equipments.get(i).getType().equals(string)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+		
+	}
+
+
+	private void initData() {
+		if(DataFlowControler.getCurrentEvent().getEquipments() != null) {
+			if(DataFlowControler.getCurrentEvent().getEquipments().size() > 0) {
+				ArrayList<Equipment> eqs = DataFlowControler.getCurrentEvent().getEquipments();
+				for(int i = 0; i< eqs.size(); i++) {
+					switch (eqs.get(i).getType()) {
+					case "Microphones":
+						michrophones.setText(eqs.get(i).getQuantity() + "");
+						break;
+					case "Sound System":
+						soundSystem.setSelected(true);
+						break;
+					case "Mobile Screens":
+						mobileScreens.setText(eqs.get(i).getQuantity() + "");
+						break;
+					case "Additional light":
+						additionalLighting.setSelected(true);
+						break;
+					case "Computers":
+						computer.setText(eqs.get(i).getQuantity() + "");
+						break;
+					case "Projectors":
+						projector.setText(eqs.get(i).getQuantity() + "");
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
 	}
 	
 }

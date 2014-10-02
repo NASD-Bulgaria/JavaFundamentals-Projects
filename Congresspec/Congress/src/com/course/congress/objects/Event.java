@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Event implements Serializable {
 	
-	private String ID;
+	private int ID;
 	private String name;
 	private int duration;
 	private Date startDate;
@@ -17,7 +17,7 @@ public class Event implements Serializable {
 	private ArrayList<Equipment> equipments;
 	private HallArrangement arrangement;
 	
-	public Event(String iD, String name, int duration, Date startDate,
+	public Event(int iD, String name, int duration, Date startDate,
 			Date endDate, String type, String description, String hallID,
 			ArrayList<Equipment> equipments, HallArrangement arrangement) {
 		super();
@@ -33,10 +33,10 @@ public class Event implements Serializable {
 		this.arrangement = arrangement;
 	}
 	
-	public String getID() {
+	public int getID() {
 		return ID;
 	}
-	public void setID(String iD) {
+	public void setID(int iD) {
 		ID = iD;
 	}
 	public String getName() {
