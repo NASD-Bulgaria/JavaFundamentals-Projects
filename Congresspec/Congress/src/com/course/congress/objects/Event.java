@@ -93,5 +93,10 @@ public class Event implements Serializable {
 	public void setArrangement(HallArrangement arrangement) {
 		this.arrangement = arrangement;
 	}
+	
+	@Override
+	public String toString(){
+		return this.name;
+	}
 
 }

@@ -11,7 +11,10 @@ import org.jdesktop.swingx.table.DatePickerCellEditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -72,6 +75,12 @@ public class PEventForm extends JPanel {
 
 	private JTable eventsTable;
 	private EventTableModel eventTableModel;
+	
+	private int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+	private int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+	private int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
 
 	public PEventForm() {
 		final PEventForm currentPanel = this;
@@ -91,7 +100,7 @@ public class PEventForm extends JPanel {
 		startDate.setBounds(190, 10, 60, 20);
 		add(startDate);
 		dateModelStartDate = new UtilDateModel();
-		dateModelStartDate.setDate(2014, 8, 24);
+		dateModelStartDate.setDate(currentYear, currentMonth, currentDay);
 		dateModelStartDate.setSelected(true);
 		datePanelStartDate = new JDatePanelImpl(dateModelStartDate);
 		datePickerStartDate = new JDatePickerImpl(datePanelStartDate);
@@ -102,7 +111,7 @@ public class PEventForm extends JPanel {
 		endDate.setBounds(395, 10, 60, 20);
 		add(endDate);
 		dateModelEndDate = new UtilDateModel();
-		dateModelEndDate.setDate(2014, 8, 24);
+		dateModelEndDate.setDate(currentYear, currentMonth, currentDay);
 		dateModelEndDate.setSelected(true);
 		datePanelEndDate = new JDatePanelImpl(dateModelEndDate);
 		datePickerEndDate = new JDatePickerImpl(datePanelEndDate);
@@ -148,7 +157,6 @@ public class PEventForm extends JPanel {
 		hallArrangement.setEnabled(false);
 		add(hallArrangement);
 
-		// Creating editable jTable for events with dummy data
 		// build the list
 		List<Event> eventList = new ArrayList<Event>();
 		
@@ -184,12 +192,14 @@ public class PEventForm extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String eventNameText = eventName.getText();
 				Date startDateText = (Date) datePickerStartDate.getModel().getValue();
+				startDateText = returnDateWithoutTime(startDateText);
 				Date endDateText = (Date) datePickerEndDate.getModel().getValue();
+				endDateText = returnDateWithoutTime(endDateText);
 				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24) + 1);
 				String typeText = eventType.getText();
 				String description = eventDescription.getText();
 				//checking if end date is after start date
-				if (!endDateText.after(startDateText)){
+				if (endDateText.before(startDateText)){
 					JOptionPane.showMessageDialog(null, "End date must be after start date!");
 				} else if (eventNameText=="" || eventNameText == null || eventNameText.isEmpty()){
 					JOptionPane.showMessageDialog(null, "Please enter event name!");
@@ -219,6 +229,7 @@ public class PEventForm extends JPanel {
 					eventDescription.setText("");
 				}
 			}
+
 		});
 		
 		removeEvent.addActionListener(new ActionListener() {
@@ -308,6 +319,15 @@ public class PEventForm extends JPanel {
 		
 	}
 	
+	protected Date returnDateWithoutTime(Date date) {
+		try {
+			return formatter.parse(formatter.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		};
+		return date;
+	}
+
 	/**
 	 * Sets alignment to the headers and the content in each cell.
 	 * @param table
