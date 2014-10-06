@@ -2,6 +2,8 @@ package com.course.congress.datastorage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import com.course.congress.objects.Equipment;
 import com.course.congress.objects.Event;
@@ -31,7 +33,7 @@ public class DataStorage {
 		}
 	}
 
-	public static void setSchedules(Schedule schedule) {
+	public static void setSchedules(HashMap<String, ArrayList<Event>> schedule) {
 		data.setSchedules(schedule);
 	}
 	public static Event[] getEvents() {
@@ -51,7 +53,7 @@ public class DataStorage {
 		return new ArrayList<Equipment>();
 	}
 
-	public static Schedule getSchedule() {
+	public static HashMap<String, ArrayList<Event>> getSchedule() {
 		return data.getSchedules();
 	}
 	
@@ -94,6 +96,19 @@ public class DataStorage {
 				}
 			}			
 		}
+	}
+	
+	public static void addNewSchedule(String hallName, Event event){
+		HashMap<String, ArrayList<Event>> schedules = data.getSchedules();
+		ArrayList<Event> eventsPerHall = new ArrayList<Event>();
+		if(schedules != null){
+			eventsPerHall = schedules.get(hallName);
+		} else {
+			schedules = new HashMap<String, ArrayList<Event>>();
+		}
+		eventsPerHall.add(event);
+		schedules.put(hallName, eventsPerHall);
+		data.setSchedules(schedules);
 	}
 
 	public static void removeEvent(int id) {

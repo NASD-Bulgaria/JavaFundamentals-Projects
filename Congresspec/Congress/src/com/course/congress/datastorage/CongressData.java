@@ -1,6 +1,8 @@
 package com.course.congress.datastorage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.course.congress.objects.Client;
 import com.course.congress.objects.Event;
@@ -13,7 +15,7 @@ public class CongressData implements Serializable {
 	
 	private Event[] events;
 	private Hall[] halls;
-	private Schedule schedules;
+	private HashMap<String, ArrayList<Event>> schedules;
 	private Client[] clients;
 	
 	public Event[] getEvents() {
@@ -28,10 +30,10 @@ public class CongressData implements Serializable {
 	public void setHalls(Hall[] halls) {
 		this.halls = halls;
 	}
-	public Schedule getSchedules() {
+	public HashMap<String, ArrayList<Event>> getSchedules() {
 		return schedules;
 	}
-	public void setSchedules(Schedule schedules) {
+	public void setSchedules(HashMap<String, ArrayList<Event>> schedules) {
 		this.schedules = schedules;
 	}
 	

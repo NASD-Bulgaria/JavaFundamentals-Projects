@@ -50,6 +50,7 @@ public class PAddScheduleForm extends JPanel {
 
 	private JButton prevMonth;
 	private JButton nextMonth;
+	private JButton buttonSave;	
 
 	private JDatePickerImpl datePicker;
 	private UtilDateModel dateModel;
@@ -67,7 +68,7 @@ public class PAddScheduleForm extends JPanel {
 	private int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
 	private Hall[] halls = DataStorage.getHalls();
-	private HashMap<String, ArrayList<Event>> schedulesMap = new HashMap<String, ArrayList<Event>>();
+	private HashMap<String, ArrayList<Event>> schedulesMap = DataStorage.getSchedule();
 	private List<Event> eventsPerHall;
 	private List<Event> existingEvent = new ArrayList<Event>();;
 	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -120,6 +121,11 @@ public class PAddScheduleForm extends JPanel {
 		eventCombo.setMaximumRowCount(3);
 		eventCombo.setBounds(470, 10, 120, 20);
 		add(eventCombo);
+		
+		buttonSave = new JButton("Edit");
+		buttonSave.setBounds(600, 10, 100, 20);
+		buttonSave.setEnabled(false);
+		add(buttonSave);
 
 		prevMonth = new JButton("<< " + getPrevMonth(currentMonth));
 		prevMonth.setBounds(10, 70, 130, 20);
@@ -277,7 +283,7 @@ public class PAddScheduleForm extends JPanel {
 						eventCombo.setSelectedIndex(0);
 						eventCombo.setEnabled(false);
 					}
-
+					
 				}
 
 				scheduleMonthLabel.setText("Schedule : "
@@ -293,6 +299,25 @@ public class PAddScheduleForm extends JPanel {
 				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
 				table.setModel(new ScheduleTableModel(halls, currentMonth,
 						currentYear));
+			}
+		});
+		
+		eventCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//buttonSave.setText("Save");
+				buttonSave.setEnabled(true);
+				//table.getModel().setValueAt(arg0, arg1, arg2);
+			}
+		});
+		
+		buttonSave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Hall selectedHall = (Hall) hallCombo.getSelectedItem();
+				String hallName = selectedHall.getName();
+				Event selectedEvent = (Event) eventCombo.getSelectedItem();
+				DataStorage.addNewSchedule(hallName, selectedEvent);
 			}
 		});
 	}

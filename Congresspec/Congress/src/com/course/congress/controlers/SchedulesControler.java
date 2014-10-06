@@ -20,11 +20,12 @@ public class SchedulesControler {
 	
 	public ArrayList<Event> getEventList(String hallID) {
 		
-		return DataStorage.getSchedule().getSchedules().get(hallID);
+		//return DataStorage.getSchedule().getSchedules().get(hallID);
+		return null;
 	}
 	
 	public void setEventList(String hallID, ArrayList<Event> event) {
 		
-		DataStorage.getSchedule().getSchedules().put(hallID, event);
+		//DataStorage.getSchedule().getSchedules().put(hallID, event);
 	}
 }
