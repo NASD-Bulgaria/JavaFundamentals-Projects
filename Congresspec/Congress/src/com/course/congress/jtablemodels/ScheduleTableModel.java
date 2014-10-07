@@ -5,28 +5,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.jdesktop.swingx.calendar.DaySelectionModel;
-
-import com.course.congress.datastorage.DataStorage;
-import com.course.congress.objects.Equipment;
 import com.course.congress.objects.Event;
 import com.course.congress.objects.Hall;
-import com.course.congress.objects.HallArrangement;
-import com.course.congress.objects.Schedule;
 
 public class ScheduleTableModel extends AbstractTableModel {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int currentMonth;
 	private int currentYear;
 	private int daysInMonth;
 	private HashMap<String, ArrayList<Event>> schedulesMap;
 	private Hall[] halls;
 	private final String[] columnNames;
-	private Date currentScheduleDate; //the selected month and year in the schedule
 
 	public ScheduleTableModel(Hall[] halls, HashMap<String, ArrayList<Event>> schedulesMap, int currentMonth,
 			int currentYear) {

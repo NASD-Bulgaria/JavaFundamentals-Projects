@@ -5,13 +5,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,9 +30,12 @@ import com.course.congress.jtablemodels.ScheduleDatesTableModel;
 import com.course.congress.jtablemodels.ScheduleTableModel;
 import com.course.congress.objects.Event;
 import com.course.congress.objects.Hall;
+import com.course.congress.utils.DateUtils;
 
 public class PAddScheduleForm extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+	
 	private JLabel hallNameLabel;
 	private JLabel dateLabel;
 	private JLabel eventNameLabel;
@@ -67,7 +66,6 @@ public class PAddScheduleForm extends JPanel {
 	
 	private List<Event> eventsPerHall;
 	private List<Event> existingEvent;
-	private SimpleDateFormat formatter;
 
 	public PAddScheduleForm() {
 		setLayout(null);
@@ -80,7 +78,6 @@ public class PAddScheduleForm extends JPanel {
 		halls = DataStorage.getHalls();
 		schedulesMap = DataStorage.getSchedule();
 		existingEvent = new ArrayList<Event>();
-		formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
 		hallNameLabel = new JLabel("Hall");
 		hallNameLabel.setBounds(10, 10, 30, 20);
@@ -119,16 +116,16 @@ public class PAddScheduleForm extends JPanel {
 		buttonSave.setEnabled(false);
 		add(buttonSave);
 
-		prevMonth = new JButton("<< " + getPrevMonth(currentMonth));
+		prevMonth = new JButton("<< " + DateUtils.getPrevMonth(currentMonth));
 		prevMonth.setBounds(10, 70, 130, 20);
 		add(prevMonth);
 
 		scheduleMonthLabel = new JLabel("Schedule : "
-				+ getCurrentMonth(currentMonth) + " " + currentYear);
+				+ DateUtils.getCurrentMonth(currentMonth) + " " + currentYear);
 		scheduleMonthLabel.setBounds(210, 70, 180, 20);
 		add(scheduleMonthLabel);
 
-		nextMonth = new JButton(getNextMonth(currentMonth) + " >>");
+		nextMonth = new JButton(DateUtils.getNextMonth(currentMonth) + " >>");
 		nextMonth.setBounds(460, 70, 130, 20);
 		add(nextMonth);
 
@@ -136,7 +133,7 @@ public class PAddScheduleForm extends JPanel {
 				currentYear));
 
 		List<String> dates = new ArrayList<String>();
-		for (int i = 0; i < getDaysOfMonth(currentMonth, currentYear); i++) {
+		for (int i = 0; i < DateUtils.getDaysOfMonth(currentMonth, currentYear); i++) {
 			dates.add("Date " + (i + 1));
 		}
 		headerTable = new JTable();
@@ -157,13 +154,13 @@ public class PAddScheduleForm extends JPanel {
 					currentMonth = currentMonth - 1;
 				}
 				scheduleMonthLabel.setText("Schedule : "
-						+ getCurrentMonth(currentMonth) + " " + currentYear);
-				prevMonth.setText("<< " + getPrevMonth(currentMonth));
-				nextMonth.setText(getNextMonth(currentMonth) + " >>");
+						+ DateUtils.getCurrentMonth(currentMonth) + " " + currentYear);
+				prevMonth.setText("<< " + DateUtils.getPrevMonth(currentMonth));
+				nextMonth.setText(DateUtils.getNextMonth(currentMonth) + " >>");
 
 				// change the displayed dates
 				List<String> dates = new ArrayList<String>();
-				for (int i = 0; i < getDaysOfMonth(currentMonth, currentYear); i++) {
+				for (int i = 0; i < DateUtils.getDaysOfMonth(currentMonth, currentYear); i++) {
 					dates.add("Date " + (i + 1));
 				}
 				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
@@ -183,13 +180,13 @@ public class PAddScheduleForm extends JPanel {
 					currentMonth = currentMonth + 1;
 				}
 				scheduleMonthLabel.setText("Schedule : "
-						+ getCurrentMonth(currentMonth) + " " + currentYear);
-				prevMonth.setText("<< " + getPrevMonth(currentMonth));
-				nextMonth.setText(getNextMonth(currentMonth) + " >>");
+						+ DateUtils.getCurrentMonth(currentMonth) + " " + currentYear);
+				prevMonth.setText("<< " + DateUtils.getPrevMonth(currentMonth));
+				nextMonth.setText(DateUtils.getNextMonth(currentMonth) + " >>");
 
 				// change the displayed dates in the jTable
 				List<String> dates = new ArrayList<String>();
-				for (int i = 0; i < getDaysOfMonth(currentMonth, currentYear); i++) {
+				for (int i = 0; i < DateUtils.getDaysOfMonth(currentMonth, currentYear); i++) {
 					dates.add("Date " + (i + 1));
 				}
 				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
@@ -217,11 +214,7 @@ public class PAddScheduleForm extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Date newDate = (Date) datePicker.getModel().getValue();
-				try {
-					newDate = formatter.parse(formatter.format(newDate));
-				} catch (ParseException e1) {
-					e1.printStackTrace();
-				}
+				newDate = DateUtils.returnDateWithoutTime(newDate);
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(newDate);
 				int month = cal.get(Calendar.MONTH);
@@ -251,13 +244,13 @@ public class PAddScheduleForm extends JPanel {
 				}
 
 				scheduleMonthLabel.setText("Schedule : "
-						+ getCurrentMonth(currentMonth) + " " + currentYear);
-				prevMonth.setText("<< " + getPrevMonth(currentMonth));
-				nextMonth.setText(getNextMonth(currentMonth) + " >>");
+						+ DateUtils.getCurrentMonth(currentMonth) + " " + currentYear);
+				prevMonth.setText("<< " + DateUtils.getPrevMonth(currentMonth));
+				nextMonth.setText(DateUtils.getNextMonth(currentMonth) + " >>");
 
 				// change the displayed dates in the jTable
 				List<String> dates = new ArrayList<String>();
-				for (int i = 0; i < getDaysOfMonth(currentMonth, currentYear); i++) {
+				for (int i = 0; i < DateUtils.getDaysOfMonth(currentMonth, currentYear); i++) {
 					dates.add("Date " + (i + 1));
 				}
 				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
@@ -266,22 +259,19 @@ public class PAddScheduleForm extends JPanel {
 			}
 		});
 		
-		eventCombo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//buttonSave.setText("Save");
-				
-				//table.getModel().setValueAt(arg0, arg1, arg2);
-			}
-		});
-		
 		buttonSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Hall selectedHall = (Hall) hallCombo.getSelectedItem();
-				String hallName = selectedHall.getName();
-				Event selectedEvent = (Event) eventCombo.getSelectedItem();
-				DataStorage.addNewSchedule(hallName, selectedEvent);
+				if (buttonSave.getText().equalsIgnoreCase("edit")) {
+					Date selectedDate = (Date) datePicker.getModel().getValue();
+					selectedDate = DateUtils.returnDateWithoutTime(selectedDate);
+					getPossibleEventsForDate(selectedDate);
+				} else if (buttonSave.getText().equalsIgnoreCase("save")) {
+					Hall selectedHall = (Hall) hallCombo.getSelectedItem();
+					String hallName = selectedHall.getName();
+					Event selectedEvent = (Event) eventCombo.getSelectedItem();
+					DataStorage.addNewSchedule(hallName, selectedEvent);
+				}
 			}
 		});
 	}
@@ -335,32 +325,5 @@ public class PAddScheduleForm extends JPanel {
 			eventCombo.setEnabled(false);
 			buttonSave.setEnabled(false);
 		}
-	}
-
-	private String getCurrentMonth(int monthIndex) {
-		String monthString = new DateFormatSymbols().getMonths()[monthIndex];
-		return monthString;
-	}
-
-	private String getPrevMonth(int monthIndex) {
-		if (monthIndex == 0) {
-			monthIndex = 12;
-		}
-		return new DateFormatSymbols().getMonths()[monthIndex - 1];
-	}
-
-	private String getNextMonth(int monthIndex) {
-		if (monthIndex == 11) {
-			monthIndex = -1;
-		}
-		return new DateFormatSymbols().getMonths()[monthIndex + 1];
-
-	}
-
-	private int getDaysOfMonth(int monthIndex, int year) {
-		Calendar mycal = new GregorianCalendar(year, monthIndex, 1);
-		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
-		return daysInMonth;
-
 	}
 }

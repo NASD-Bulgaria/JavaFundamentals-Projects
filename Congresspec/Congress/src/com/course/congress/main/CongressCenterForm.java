@@ -56,8 +56,8 @@ public class CongressCenterForm extends JFrame {
 		JMenu schedule = new JMenu("Schedule");
 		JMenuItem showSchedule = new JMenuItem("Show Schedule");
 		schedule.add(showSchedule);
-		JMenuItem editSchedule= new JMenuItem("Edit schedule");
-		schedule.add(editSchedule);
+		/*JMenuItem editSchedule= new JMenuItem("Edit schedule");
+		schedule.add(editSchedule);*/
 		
 
 		JMenu helpMenu = new JMenu("Help");

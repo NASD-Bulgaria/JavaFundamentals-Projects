@@ -11,8 +11,6 @@ import org.jdesktop.swingx.table.DatePickerCellEditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -40,8 +38,11 @@ import com.course.congress.datastorage.DataStorage;
 import com.course.congress.jtablemodels.DateValueRenderer;
 import com.course.congress.jtablemodels.EventTableModel;
 import com.course.congress.objects.Event;
+import com.course.congress.utils.DateUtils;
 
 public class PEventForm extends JPanel {
+
+	private static final long serialVersionUID = 1L;
 
 	private JScrollPane scrollPane;
 
@@ -76,17 +77,20 @@ public class PEventForm extends JPanel {
 	private JTable eventsTable;
 	private EventTableModel eventTableModel;
 	
-	private int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
-	private int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-	private int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
+	private int currentMonth;
+	private int currentYear;
+	private int currentDay;
 
 	public PEventForm() {
 		final PEventForm currentPanel = this;
 		setLayout(null);
 		setSize(1000, 1000);
 		setBackground(Color.GRAY);
+		
+		Calendar cal = Calendar.getInstance();
+		currentMonth = cal.get(Calendar.MONTH);
+		currentYear = cal.get(Calendar.YEAR);
+		currentDay = cal.get(Calendar.DAY_OF_MONTH);
 
 		// name
 		name = new JLabel("Name");
@@ -192,9 +196,9 @@ public class PEventForm extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String eventNameText = eventName.getText();
 				Date startDateText = (Date) datePickerStartDate.getModel().getValue();
-				startDateText = returnDateWithoutTime(startDateText);
+				startDateText = DateUtils.returnDateWithoutTime(startDateText);
 				Date endDateText = (Date) datePickerEndDate.getModel().getValue();
-				endDateText = returnDateWithoutTime(endDateText);
+				endDateText = DateUtils.returnDateWithoutTime(endDateText);
 				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24) + 1);
 				String typeText = eventType.getText();
 				String description = eventDescription.getText();
@@ -317,20 +321,6 @@ public class PEventForm extends JPanel {
 		});
 	}
 	
-	/**
-	 * Formats the date so that the time is set to 00:00:00
-	 * @param date - the date that needs to be formated
-	 * @return formated date (dd/MM/yyyy)
-	 */
-	protected Date returnDateWithoutTime(Date date) {
-		try {
-			return formatter.parse(formatter.format(date));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		};
-		return date;
-	}
-
 	/**
 	 * Sets alignment to the headers and the content in each cell.
 	 * @param table
