@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
@@ -33,10 +32,8 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import com.course.congress.datastorage.DataStorage;
 import com.course.congress.jtablemodels.ScheduleDatesTableModel;
 import com.course.congress.jtablemodels.ScheduleTableModel;
-import com.course.congress.objects.Equipment;
 import com.course.congress.objects.Event;
 import com.course.congress.objects.Hall;
-import com.course.congress.objects.HallArrangement;
 
 public class PAddScheduleForm extends JPanel {
 
@@ -56,39 +53,35 @@ public class PAddScheduleForm extends JPanel {
 	private UtilDateModel dateModel;
 	private JDatePanelImpl datePanel;
 
-	private DefaultTableModel model;
 	private JTable table;
 	private JTable headerTable;
 	private JScrollPane scrollPane;
 
-	private int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
-	private int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-	private int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-	Calendar mycal = new GregorianCalendar(currentYear, currentMonth, 1);
-	private int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+	private int currentMonth;
+	private int currentYear;
+	private int currentDay;
 
-	private Hall[] halls = DataStorage.getHalls();
-	private HashMap<String, ArrayList<Event>> schedulesMap = DataStorage.getSchedule();
+	private Hall[] halls;
+	private Event[] events;
+	private HashMap<String, ArrayList<Event>> schedulesMap;
+	
 	private List<Event> eventsPerHall;
-	private List<Event> existingEvent = new ArrayList<Event>();;
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	private List<Event> existingEvent;
+	private SimpleDateFormat formatter;
 
 	public PAddScheduleForm() {
 		setLayout(null);
 		setBackground(Color.GRAY);
 
-		// create dummy data
-		/*
-		 * ArrayList<Equipment> listEquipment = new ArrayList<>();
-		 * HallArrangement ha = new HallArrangement(""); Event event1 = new
-		 * Event(1, "name 1", 1, new Date(), new Date(), "", "", "",
-		 * listEquipment, ha); ArrayList<Event> dummyEvent = new ArrayList<>();
-		 * dummyEvent.add(event1);
-		 * 
-		 * schedulesMap.put("fdgdfgdfg", dummyEvent); schedulesMap.put("Hall 1",
-		 * dummyEvent);
-		 */
-
+		currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+		currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+		events = DataStorage.getEvents();
+		halls = DataStorage.getHalls();
+		schedulesMap = DataStorage.getSchedule();
+		existingEvent = new ArrayList<Event>();
+		formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
 		hallNameLabel = new JLabel("Hall");
 		hallNameLabel.setBounds(10, 10, 30, 20);
 		add(hallNameLabel);
@@ -115,8 +108,7 @@ public class PAddScheduleForm extends JPanel {
 		eventNameLabel = new JLabel("Event");
 		eventNameLabel.setBounds(430, 10, 50, 20);
 		add(eventNameLabel);
-		eventCombo = new JComboBox(new DefaultComboBoxModel(
-				existingEvent.toArray()));
+		eventCombo = new JComboBox(new DefaultComboBoxModel(existingEvent.toArray()));
 		eventCombo.setEnabled(false);
 		eventCombo.setMaximumRowCount(3);
 		eventCombo.setBounds(470, 10, 120, 20);
@@ -140,7 +132,7 @@ public class PAddScheduleForm extends JPanel {
 		nextMonth.setBounds(460, 70, 130, 20);
 		add(nextMonth);
 
-		table = new JTable(new ScheduleTableModel(halls, currentMonth,
+		table = new JTable(new ScheduleTableModel(halls, schedulesMap,currentMonth,
 				currentYear));
 
 		List<String> dates = new ArrayList<String>();
@@ -175,7 +167,7 @@ public class PAddScheduleForm extends JPanel {
 					dates.add("Date " + (i + 1));
 				}
 				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
-				table.setModel(new ScheduleTableModel(halls, currentMonth,
+				table.setModel(new ScheduleTableModel(halls, schedulesMap, currentMonth,
 						currentYear));
 			}
 
@@ -201,7 +193,7 @@ public class PAddScheduleForm extends JPanel {
 					dates.add("Date " + (i + 1));
 				}
 				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
-				table.setModel(new ScheduleTableModel(halls, currentMonth,
+				table.setModel(new ScheduleTableModel(halls, schedulesMap, currentMonth,
 						currentYear));
 			}
 		});
@@ -212,6 +204,12 @@ public class PAddScheduleForm extends JPanel {
 				Hall selectedHall = (Hall) hallCombo.getSelectedItem();
 				String hallName = selectedHall.getName();
 				eventsPerHall = schedulesMap.get(hallName);
+				
+				//clear selected values for the other combos
+				dateModel.setSelected(false);
+				eventCombo.setSelectedIndex(-1);
+				eventCombo.setEnabled(false);
+				buttonSave.setEnabled(false);
 			}
 		});
 
@@ -232,58 +230,24 @@ public class PAddScheduleForm extends JPanel {
 				currentMonth = month;
 				currentYear = year;
 
+				//if there are events assigned to the selected hall
 				if (eventsPerHall != null) {
 					for (Event event : eventsPerHall) {
 						Date eventStartDate = event.getStartDate();
-						try {
-							eventStartDate = formatter.parse(formatter
-									.format(event.getStartDate()));
-						} catch (ParseException e1) {
-							e1.printStackTrace();
-						}
+						//if there are events assigned to the hall on the selected date
 						if (eventStartDate.equals(newDate)) {
 							eventCombo.removeAllItems();
 							eventCombo.addItem(event);
 							eventCombo.setSelectedIndex(0);
-							eventCombo.setEnabled(true);
-						} /*else {
-							Event[] events = DataStorage.getEvents();
-							eventCombo.removeAllItems();
-							for (int i = 0; i < events.length; i++) {
-								if (events[i].getStartDate().equals(newDate)) {
-									eventCombo.addItem(events[i]);
-								}
-							}
-							if (eventCombo.getItemCount() > 0) {
-								eventCombo.insertItemAt("Please choose..", 0);
-								eventCombo.setSelectedIndex(0);
-								eventCombo.setEnabled(true);
-							} else {
-								eventCombo.insertItemAt("No events..", 0);
-								eventCombo.setSelectedIndex(0);
-								eventCombo.setEnabled(false);
-							}
-
-						}*/
-					}
-				} else {
-					Event[] events = DataStorage.getEvents();
-					eventCombo.removeAllItems();
-					for (int i = 0; i < events.length; i++) {
-						if (events[i].getStartDate().equals(newDate)) {
-							eventCombo.addItem(events[i]);
+							eventCombo.setEnabled(false);
+							buttonSave.setEnabled(true);
+						} else {
+							//Show possible events for the selected date and hall
+							getPossibleEventsForDate(newDate);
 						}
 					}
-					if (eventCombo.getItemCount() > 0) {
-						eventCombo.insertItemAt("Please choose..", 0);
-						eventCombo.setSelectedIndex(0);
-						eventCombo.setEnabled(true);
-					} else {
-						eventCombo.insertItemAt("No events..", 0);
-						eventCombo.setSelectedIndex(0);
-						eventCombo.setEnabled(false);
-					}
-					
+				} else {
+					getPossibleEventsForDate(newDate);
 				}
 
 				scheduleMonthLabel.setText("Schedule : "
@@ -297,7 +261,7 @@ public class PAddScheduleForm extends JPanel {
 					dates.add("Date " + (i + 1));
 				}
 				changeHeaderTableProperties(new ScheduleDatesTableModel(dates));
-				table.setModel(new ScheduleTableModel(halls, currentMonth,
+				table.setModel(new ScheduleTableModel(halls, schedulesMap,currentMonth,
 						currentYear));
 			}
 		});
@@ -306,7 +270,7 @@ public class PAddScheduleForm extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//buttonSave.setText("Save");
-				buttonSave.setEnabled(true);
+				
 				//table.getModel().setValueAt(arg0, arg1, arg2);
 			}
 		});
@@ -346,6 +310,31 @@ public class PAddScheduleForm extends JPanel {
 						return component;
 					}
 				});
+	}
+	
+	/**
+	 * Fills the combobox with the possible events for the selected date and hall.
+	 * @param selectedDate
+	 */
+	private void getPossibleEventsForDate(Date selectedDate){
+		eventCombo.removeAllItems();
+		for (int i = 0; i < events.length; i++) {
+			if (events[i].getStartDate().equals(selectedDate)) {
+				eventCombo.addItem(events[i]);
+			}
+		}
+		if (eventCombo.getItemCount() > 0) {
+			eventCombo.insertItemAt("Please choose..", 0);
+			eventCombo.setSelectedIndex(0);
+			eventCombo.setEnabled(true);
+			buttonSave.setText("Save");
+			buttonSave.setEnabled(true);
+		} else {
+			eventCombo.insertItemAt("No events..", 0);
+			eventCombo.setSelectedIndex(0);
+			eventCombo.setEnabled(false);
+			buttonSave.setEnabled(false);
+		}
 	}
 
 	private String getCurrentMonth(int monthIndex) {

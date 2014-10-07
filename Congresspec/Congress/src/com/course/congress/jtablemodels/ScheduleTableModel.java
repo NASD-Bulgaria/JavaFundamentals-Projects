@@ -24,17 +24,19 @@ public class ScheduleTableModel extends AbstractTableModel {
 	private int currentYear;
 	private int daysInMonth;
 	private HashMap<String, ArrayList<Event>> schedulesMap;
-	private Hall[] halls = DataStorage.getHalls();
-	// private Hall[] halls = new Hall[5];
-	private final String[] columnNames = new String[halls.length];
+	private Hall[] halls;
+	private final String[] columnNames;
+	private Date currentScheduleDate; //the selected month and year in the schedule
 
-	public ScheduleTableModel(Hall[] halls, int currentMonth,
+	public ScheduleTableModel(Hall[] halls, HashMap<String, ArrayList<Event>> schedulesMap, int currentMonth,
 			int currentYear) {
 		this.halls = halls;
+		this.schedulesMap = schedulesMap;
 		this.currentMonth = currentMonth;
 		this.currentYear = currentYear;
 		Calendar mycal = new GregorianCalendar(currentYear, currentMonth, 1);
 		this.daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		this.columnNames = new String[halls.length];
 	}
 
 	@Override
@@ -57,27 +59,11 @@ public class ScheduleTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-//		Calendar mycal = new GregorianCalendar(currentYear, currentMonth, 1);
-//		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
 		return this.daysInMonth;
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		//create dummy data
-		ArrayList<Equipment> listEquipment = new ArrayList<>();
-		HallArrangement ha = new HallArrangement("");
-		Event event1 = new Event(1, "name1", 1, new Date(), new Date(), "", "", "", listEquipment, ha);
-		Event event2 = new Event(2, "name2", 1, new Date(), new Date(), "", "", "", listEquipment, ha);
-		ArrayList<Event> dummyEvent = new ArrayList<>();
-		dummyEvent.add(event1);
-		dummyEvent.add(event2);
-		
-		schedulesMap = new HashMap<>();
-		schedulesMap.put("fdgdfgdfg", dummyEvent);
-		schedulesMap.put("Hall 1", dummyEvent);
-		
-		
 		ArrayList<Event> eventsPerHall = schedulesMap.get(columnNames[columnIndex]);
 		
 		for (int i = 0; i <= this.daysInMonth; i++) {
@@ -87,7 +73,9 @@ public class ScheduleTableModel extends AbstractTableModel {
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(eventStartDate);
 					int startDay = cal.get(Calendar.DAY_OF_MONTH);
-					if ((rowIndex + 1) == startDay) {
+					int eventMonth = cal.get(Calendar.MONTH);
+					int eventYear = cal.get(Calendar.YEAR);
+					if ((rowIndex + 1) == startDay && this.currentMonth == eventMonth && this.currentYear == eventYear) {
 						return event.getName();
 					} else {
 						return "";
@@ -122,15 +110,5 @@ public class ScheduleTableModel extends AbstractTableModel {
 			 */
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
-
-	/*public void addRow(Hall hall) {
-		hallList.add(hall);
-		fireTableRowsInserted(hallList.size() - 1, hallList.size() - 1);
-	}
-
-	public void removeRow(int rowIndex) {
-		hallList.remove(rowIndex);
-		fireTableRowsDeleted(rowIndex, rowIndex);
-	}*/
 
 }

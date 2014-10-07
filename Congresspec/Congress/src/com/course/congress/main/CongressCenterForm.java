@@ -80,6 +80,7 @@ public class CongressCenterForm extends JFrame {
 					DataStorage.initFromFile("save file.ser");
 					PPanelControler.refreshCurrentPanel();
 				} catch (ClassNotFoundException | IOException e1) {
+					System.out.println("Error reading from file ! " + e);
 				}
 			}
 		});

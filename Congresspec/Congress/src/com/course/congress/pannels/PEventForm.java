@@ -223,8 +223,8 @@ public class PEventForm extends JPanel {
 					DataStorage.addNewEvent(event);
 					
 					eventName.setText("");
-					dateModelStartDate.setDate(2014, 8, 24);
-					dateModelEndDate.setDate(2014, 8, 24);
+					dateModelStartDate.setDate(currentYear, currentMonth, currentDay);
+					dateModelEndDate.setDate(currentYear, currentMonth, currentDay);
 					eventType.setText("");
 					eventDescription.setText("");
 				}
@@ -307,18 +307,21 @@ public class PEventForm extends JPanel {
 		});
 		
 		hallArrangement.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(DataFlowControler.getCurrentEvent() != null) {
+				if (DataFlowControler.getCurrentEvent() != null) {
 					PArangement arangement = new PArangement();
-					PPanelControler.showNextPanel(arangement);					
+					PPanelControler.showNextPanel(arangement);
 				}
 			}
 		});
-		
 	}
 	
+	/**
+	 * Formats the date so that the time is set to 00:00:00
+	 * @param date - the date that needs to be formated
+	 * @return formated date (dd/MM/yyyy)
+	 */
 	protected Date returnDateWithoutTime(Date date) {
 		try {
 			return formatter.parse(formatter.format(date));
