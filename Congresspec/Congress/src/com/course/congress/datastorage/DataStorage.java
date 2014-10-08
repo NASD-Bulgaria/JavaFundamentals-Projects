@@ -128,5 +128,16 @@ public class DataStorage {
 		}
 		data.setEvents(newEvents);
 	}
+
+	public static void removeHall(int id) {
+		Hall[] newHalls = new Hall[data.getHalls().length-1];
+		int count = 0;
+		for(int i = 0; i < data.getHalls().length; i++) {
+			if(data.getHalls()[i].getID() != id) {
+				newHalls[count++] = data.getHalls()[i];
+			}
+		}
+		data.setHalls(newHalls);
+	}
 	
 }

@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public class Hall implements Serializable {
 	
-	private String ID;
+	private int ID;
 	private String name;
 	private int capacity;
 	private int floor;
 	
-	public Hall(String iD, String name, int capacity, int floor) {
+	public Hall(int iD, String name, int capacity, int floor) {
 		super();
 		ID = iD;
 		this.name = name;
@@ -17,11 +17,11 @@ public class Hall implements Serializable {
 		this.floor = floor;
 	}
 
-	public String getID() {
+	public int getID() {
 		return ID;
 	}
 
-	public void setID(String iD) {
+	public void setID(int iD) {
 		ID = iD;
 	}
 

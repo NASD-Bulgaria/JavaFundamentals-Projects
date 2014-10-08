@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -175,6 +177,8 @@ public class PEventForm extends JPanel {
 		eventTableModel = new EventTableModel(eventList);
 		// create the table
 		eventsTable = new JTable(eventTableModel);
+		eventsTable.setColumnSelectionAllowed(false);
+		eventsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		setTableAlignment(eventsTable);
 		eventsTable.setFillsViewportHeight(true);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
@@ -295,12 +299,13 @@ public class PEventForm extends JPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
+					
 		        	removeEvent.setEnabled(true);
 		        	equipment.setEnabled(true);
 		        	hallArrangement.setEnabled(true);
 		        	if(DataStorage.getEvents() != null) {
 		        		for(int i=0; i<DataStorage.getEvents().length; i++) {
-		        			if(DataStorage.getEvents()[i].getID() == eventTableModel.getRowObject(e.getFirstIndex()).getID())  {
+		        			if(DataStorage.getEvents()[i].getID() == eventTableModel.getRowObject(((DefaultListSelectionModel)e.getSource()).getLeadSelectionIndex()).getID())  {
 		        				DataFlowControler.setCurrentEvent(DataStorage.getEvents()[i]);	
 		        				break;
 		        			}

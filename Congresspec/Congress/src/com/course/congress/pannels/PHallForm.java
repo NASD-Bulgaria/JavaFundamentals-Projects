@@ -118,11 +118,18 @@ public class PHallForm extends JPanel {
 				} else if (capacityText <= 0 ) {
 					JOptionPane.showMessageDialog(null, "Hall capacity must be bigger than 0.");
 				} else {
-					Hall hall = new Hall(null, hallNameText, capacityText, floorText);
+					int max = 0;
+					if(DataStorage.getHalls() != null) {
+						for(int i = 0; i < DataStorage.getHalls().length; i++) {
+							if(DataStorage.getHalls()[i].getID() > max) {
+								max = DataStorage.getHalls()[i].getID();
+							}
+						} 
+					}
+					Hall hall = new Hall(++max, hallNameText, capacityText, floorText);
 					hallTableModel.addRow(hall);
 					//add to data repository
 					DataStorage.addNewHall(hall);
-					
 					//clear fields
 					hallName.setText("");
 					hallCapacity.setValue(new Integer(150));
@@ -135,6 +142,7 @@ public class PHallForm extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				 if (hallsTable.getSelectedRow() != -1) {
+					 DataStorage.removeHall(hallTableModel.getRowObject(hallsTable.getSelectedRow()).getID());
 					 hallTableModel.removeRow(hallsTable.getSelectedRow());
 			        } else {
 			        	JOptionPane.showMessageDialog(null, "Please select hall from the table first.");

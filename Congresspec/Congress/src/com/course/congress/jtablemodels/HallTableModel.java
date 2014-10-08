@@ -79,5 +79,9 @@ public class HallTableModel extends AbstractTableModel {
 		hallList.remove(rowIndex);
 	    fireTableRowsDeleted(rowIndex, rowIndex);
 	}
+	
+	public Hall getRowObject(int i) {
+		return hallList.get(i);
+	}
 
 }
