@@ -10,6 +10,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.course.congress.objects.Event;
 import com.course.congress.objects.Hall;
+import com.course.congress.utils.DateUtils;
 
 public class ScheduleTableModel extends AbstractTableModel {
 
@@ -60,23 +61,23 @@ public class ScheduleTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		ArrayList<Event> eventsPerHall = schedulesMap.get(columnNames[columnIndex]);
 		
-		for (int i = 0; i <= this.daysInMonth; i++) {
-			if (eventsPerHall != null) {
-				for (Event event : eventsPerHall) {
-					Date eventStartDate = event.getStartDate();
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(eventStartDate);
-					int startDay = cal.get(Calendar.DAY_OF_MONTH);
-					int eventMonth = cal.get(Calendar.MONTH);
-					int eventYear = cal.get(Calendar.YEAR);
-					if ((rowIndex + 1) == startDay && this.currentMonth == eventMonth && this.currentYear == eventYear) {
-						return event.getName();
-					} else {
-						return "";
+		if (eventsPerHall != null) {
+			for (int i = 0; i <= this.daysInMonth; i++) {
+				if (eventsPerHall != null) {
+					for (Event event : eventsPerHall) {
+						Date eventStartDate = event.getStartDate();
+						int startDay = DateUtils.getDayIndex(eventStartDate);
+						int eventMonth = DateUtils.getMonthIndex(eventStartDate);
+						int eventYear = DateUtils.getYearIndex(eventStartDate);
+						if ((rowIndex + 1) == startDay && this.currentMonth == eventMonth && this.currentYear == eventYear) {
+							return event.getName();
+						} else {
+							// return "";
+						}
 					}
+				} else {
+					return null;
 				}
-			} else {
-				return null;
 			}
 		}
 		return null;
@@ -90,18 +91,6 @@ public class ScheduleTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		// Schedule row = hallList.get(rowIndex);
-		Calendar mycal = new GregorianCalendar(currentYear, currentMonth, 1);
-		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-		/*
-		 * if (0 == columnIndex) { for (int i = 0; i < daysInMonth; i++) {
-		 * this.setValueAt("Date " + (i + 1),i,0); } }
-		 *//*
-			 * else if (1 == columnIndex) { this.setCapacity("Event name", 0,
-			 * 0); } else if (2 == columnIndex) { row.setFloor((Integer)
-			 * aValue); }
-			 */
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
 

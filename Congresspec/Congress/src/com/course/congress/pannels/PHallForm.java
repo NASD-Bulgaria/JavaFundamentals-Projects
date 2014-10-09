@@ -41,6 +41,8 @@ public class PHallForm extends JPanel {
 	private JTable hallsTable;
 	private HallTableModel hallTableModel;
 	private JScrollPane scrollPane;
+	
+	private List<Hall> hallList;
 
 	private static final Integer[] floors = { 1, 2, 3, 4, 5 };
 
@@ -75,7 +77,7 @@ public class PHallForm extends JPanel {
 
 		// Creating editable jTable for halls with data from file
 		// build the list
-		List<Hall> hallList = new ArrayList<Hall>();
+		hallList = new ArrayList<Hall>();
 		Hall[] halls = DataStorage.getHalls();
 		if(halls != null) {
 			for (int i = 0; i < halls.length; i++) {
@@ -127,9 +129,17 @@ public class PHallForm extends JPanel {
 						} 
 					}
 					Hall hall = new Hall(++max, hallNameText, capacityText, floorText);
+					for (Hall existingHall : hallList) {
+						if (existingHall.getName().equalsIgnoreCase(hallNameText) && existingHall.getCapacity() == capacityText && existingHall.getFloor() == floorText) {
+							JOptionPane.showMessageDialog(null, "This hall already exists! Create new one!");
+							return;
+						} 
+					}
+					
 					hallTableModel.addRow(hall);
-					//add to data repository
-					DataStorage.addNewHall(hall);
+					// add to data repository
+					DataStorage.addNewHall(hall);							
+					
 					//clear fields
 					hallName.setText("");
 					hallCapacity.setValue(new Integer(150));

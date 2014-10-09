@@ -100,13 +100,21 @@ public class DataStorage {
 	
 	public static void addNewSchedule(String hallName, Event event){
 		HashMap<String, ArrayList<Event>> schedules = data.getSchedules();
-		ArrayList<Event> eventsPerHall = new ArrayList<Event>();
+		ArrayList<Event> eventsPerHall = null;
 		if(schedules != null){
-			eventsPerHall = schedules.get(hallName);
+			eventsPerHall = schedules.get(hallName) != null ? schedules.get(hallName) : new ArrayList<Event>();
 		} else {
 			schedules = new HashMap<String, ArrayList<Event>>();
 		}
 		eventsPerHall.add(event);
+		schedules.put(hallName, eventsPerHall);
+		data.setSchedules(schedules);
+	}
+	
+	public static void removeSchedule(String hallName, Event event){
+		HashMap<String, ArrayList<Event>> schedules = data.getSchedules();
+		ArrayList<Event> eventsPerHall = schedules.get(hallName);
+		eventsPerHall.remove(event);
 		schedules.put(hallName, eventsPerHall);
 		data.setSchedules(schedules);
 	}

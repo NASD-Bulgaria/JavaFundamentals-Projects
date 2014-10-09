@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 public class DateUtils {
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	private static Calendar cal = Calendar.getInstance();
 	
 	/**
 	 * Formats the date so that the time is set to 00:00:00
@@ -53,4 +54,21 @@ public class DateUtils {
 		return daysInMonth;
 	}
 	
+	public static int getDayIndex(Date date){
+		cal.setTime(date);
+		int dayIndex = cal.get(Calendar.DAY_OF_MONTH);
+		return dayIndex;
+	}
+	
+	public static int getMonthIndex(Date date){
+		cal.setTime(date);
+		int monthIndex = cal.get(Calendar.MONTH);
+		return monthIndex;
+	}
+	
+	public static int getYearIndex(Date date){
+		cal.setTime(date);
+		int year = cal.get(Calendar.YEAR);
+		return year;
+	}
 }
