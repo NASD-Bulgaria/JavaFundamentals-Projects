@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -278,12 +279,12 @@ public class PAddScheduleForm extends JPanel {
 		buttonSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Date selectedDate = (Date) datePicker.getModel().getValue();
+				selectedDate = DateUtils.returnDateWithoutTime(selectedDate);
+				Hall selectedHall = (Hall) hallCombo.getSelectedItem();
 				if (buttonSave.getText().equalsIgnoreCase("edit")) {
-					Date selectedDate = (Date) datePicker.getModel().getValue();
-					selectedDate = DateUtils.returnDateWithoutTime(selectedDate);
 					getPossibleEventsForDate(selectedDate);
 				} else if (buttonSave.getText().equalsIgnoreCase("save")) {
-					Hall selectedHall = (Hall) hallCombo.getSelectedItem();
 					String hallName = selectedHall.getName();
 					Event selectedEvent = null;
 					try {
@@ -298,15 +299,18 @@ public class PAddScheduleForm extends JPanel {
 					}
 					int duration = selectedEvent.getDuration();
 					if (duration > 1) {
-						while (duration == 1) {
-							Object cellValue = table.getModel().getValueAt(7, 0);
+						int rowIndex = DateUtils.getDayIndex(selectedDate);
+						int colIndex = Arrays.asList(halls).indexOf(selectedHall);
+						do {
+							rowIndex = rowIndex + (duration - 1);
+							Object cellValue = table.getModel().getValueAt(rowIndex, colIndex);
 							if (cellValue == null) {
 								duration--;
 							} else {
 								JOptionPane.showMessageDialog(null, "The hall is occupied for the selected period!");
 								return;
 							}
-						}
+						} while (duration >= 1);
 					}
 					DataStorage.addNewSchedule(hallName, selectedEvent);
 					table.setModel(new ScheduleTableModel(halls, schedulesMap, currentMonth, currentYear));
