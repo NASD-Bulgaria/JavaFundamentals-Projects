@@ -60,28 +60,25 @@ public class ScheduleTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		ArrayList<Event> eventsPerHall = schedulesMap.get(columnNames[columnIndex]);
-		
 		if (eventsPerHall != null) {
 			for (int i = 0; i <= this.daysInMonth; i++) {
-				if (eventsPerHall != null) {
+				if(rowIndex == i){
 					for (Event event : eventsPerHall) {
 						Date eventStartDate = event.getStartDate();
-						int startDay = DateUtils.getDayIndex(eventStartDate);
-						int eventMonth = DateUtils.getMonthIndex(eventStartDate);
-						int eventYear = DateUtils.getYearIndex(eventStartDate);
-						if ((rowIndex + 1) == startDay && this.currentMonth == eventMonth && this.currentYear == eventYear) {
+						Date eventEndDate = event.getEndDate();
+						Date currentCalendarDate = DateUtils.getDateByDayMonthYear((rowIndex + 1), currentMonth, currentYear);
+						
+						int dateMarginStart = DateUtils.returnDateWithoutTime(eventStartDate).compareTo(DateUtils.returnDateWithoutTime(currentCalendarDate));
+						int dateMarginEnd = DateUtils.returnDateWithoutTime(eventEndDate).compareTo(DateUtils.returnDateWithoutTime(currentCalendarDate));
+						
+						if (dateMarginStart <= 0 && dateMarginEnd >= 0) {
 							return event.getName();
-						} else {
-							// return "";
 						}
 					}
-				} else {
-					return null;
-				}
+				} 
 			}
 		}
 		return null;
-			
 	}
 
 	@Override

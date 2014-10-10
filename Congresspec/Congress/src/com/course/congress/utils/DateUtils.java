@@ -11,24 +11,38 @@ import java.util.GregorianCalendar;
  * Class for working with dates.
  */
 public class DateUtils {
-	
-	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+	private static SimpleDateFormat formatter = new SimpleDateFormat(
+			"dd/MM/yyyy");
 	private static Calendar cal = Calendar.getInstance();
-	
+
 	/**
 	 * Formats the date so that the time is set to 00:00:00
-	 * @param date - the date that needs to be formated
+	 * 
+	 * @param date
+	 *            - the date that needs to be formated
 	 * @return formated date (dd/MM/yyyy)
 	 */
 	public static Date returnDateWithoutTime(Date date) {
-		try {
+		Date res = date;
+		cal.setTime( date );
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+	    res = cal.getTime();
+
+	    return res;
+		/*try {
 			return formatter.parse(formatter.format(date));
 		} catch (ParseException e) {
 			e.printStackTrace();
-		};
-		return date;
+		}
+		;
+		return date;*/
 	}
-	
+
 	public static String getCurrentMonth(int monthIndex) {
 		String monthString = new DateFormatSymbols().getMonths()[monthIndex];
 		return monthString;
@@ -53,22 +67,27 @@ public class DateUtils {
 		int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
 		return daysInMonth;
 	}
-	
-	public static int getDayIndex(Date date){
+
+	public static int getDayIndex(Date date) {
 		cal.setTime(date);
 		int dayIndex = cal.get(Calendar.DAY_OF_MONTH);
 		return dayIndex;
 	}
-	
-	public static int getMonthIndex(Date date){
+
+	public static int getMonthIndex(Date date) {
 		cal.setTime(date);
 		int monthIndex = cal.get(Calendar.MONTH);
 		return monthIndex;
 	}
-	
-	public static int getYearIndex(Date date){
+
+	public static int getYearIndex(Date date) {
 		cal.setTime(date);
 		int year = cal.get(Calendar.YEAR);
 		return year;
+	}
+
+	public static Date getDateByDayMonthYear(int day, int month, int year) {
+		cal.set(year, month, day, 0, 0, 0);
+		return cal.getTime();
 	}
 }

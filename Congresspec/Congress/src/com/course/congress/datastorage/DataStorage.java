@@ -3,12 +3,10 @@ package com.course.congress.datastorage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.course.congress.objects.Equipment;
 import com.course.congress.objects.Event;
 import com.course.congress.objects.Hall;
-import com.course.congress.objects.Schedule;
 import com.course.congress.serializable.Serialization;
 
 public class DataStorage {

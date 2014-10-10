@@ -17,6 +17,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -205,7 +206,13 @@ public class PAddScheduleForm extends JPanel {
 		hallCombo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Hall selectedHall = (Hall) hallCombo.getSelectedItem();
+				Hall selectedHall = null;
+				try {
+					selectedHall = (Hall) hallCombo.getSelectedItem();
+				} catch (ClassCastException ce) {
+					hallCombo.setSelectedIndex(1);;
+					selectedHall = (Hall) hallCombo.getSelectedItem();
+				}
 				String hallName = selectedHall.getName();
 				eventsPerHall = schedulesMap.get(hallName);
 				
@@ -278,8 +285,6 @@ public class PAddScheduleForm extends JPanel {
 				} else if (buttonSave.getText().equalsIgnoreCase("save")) {
 					Hall selectedHall = (Hall) hallCombo.getSelectedItem();
 					String hallName = selectedHall.getName();
-					Date newDate = (Date) datePicker.getModel().getValue();
-					newDate = DateUtils.returnDateWithoutTime(newDate);
 					Event selectedEvent = null;
 					try {
 						selectedEvent = (Event) eventCombo.getSelectedItem();
@@ -291,9 +296,20 @@ public class PAddScheduleForm extends JPanel {
 								currentYear));
 						return;
 					}
+					int duration = selectedEvent.getDuration();
+					if (duration > 1) {
+						while (duration == 1) {
+							Object cellValue = table.getModel().getValueAt(7, 0);
+							if (cellValue == null) {
+								duration--;
+							} else {
+								JOptionPane.showMessageDialog(null, "The hall is occupied for the selected period!");
+								return;
+							}
+						}
+					}
 					DataStorage.addNewSchedule(hallName, selectedEvent);
-					table.setModel(new ScheduleTableModel(halls, schedulesMap, currentMonth,
-							currentYear));
+					table.setModel(new ScheduleTableModel(halls, schedulesMap, currentMonth, currentYear));
 				}
 			}
 		});
@@ -332,23 +348,36 @@ public class PAddScheduleForm extends JPanel {
 	private void getPossibleEventsForDate(Date selectedDate){
 		Hall selectedHall = (Hall) hallCombo.getSelectedItem();
 		String selectedHallName = selectedHall.getName();
+		ArrayList<Event> allAssignedEvents = new ArrayList<Event>();
 		eventCombo.removeAllItems();
+		
+		if (!schedulesMap.isEmpty()) {
+			for (Map.Entry<String, ArrayList<Event>> entry : schedulesMap.entrySet()) {
+				ArrayList<Event> assignedEventsPerHall = entry.getValue();
+				for (Event event : assignedEventsPerHall) {
+					allAssignedEvents.add(event);
+				}
+			}
+		}
+		
 		for (int i = 0; i < events.length; i++) {
 			if (events[i].getStartDate().equals(selectedDate)) {
 				if (!schedulesMap.isEmpty()) {
-					for (Map.Entry<String, ArrayList<Event>> entry : schedulesMap
-							.entrySet()) {
+					for (Map.Entry<String, ArrayList<Event>> entry : schedulesMap.entrySet()) {
 						String hallName = entry.getKey();
-						ArrayList<Event> assignedEvents = entry.getValue();
+						ArrayList<Event> assignedEventsPerHall = entry.getValue();
+						
 						// if event is assigned to a hall, don't add it to the
 						// possible events
-						if (!assignedEvents.contains(events[i])) {
+						if (!allAssignedEvents.contains(events[i])) {
 							eventCombo.addItem(events[i]);
-						} else if (assignedEvents.contains(events[i])
+							break;
+						} else if (assignedEventsPerHall.contains(events[i])
 								&& hallName.equalsIgnoreCase(selectedHallName)) {
 							eventCombo.addItem(events[i]);
 						}
 					}
+					
 				} else {
 					eventCombo.addItem(events[i]);
 				}
