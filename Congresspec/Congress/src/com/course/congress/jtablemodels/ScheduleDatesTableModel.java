@@ -6,6 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class ScheduleDatesTableModel extends AbstractTableModel {
 
+	private static final long serialVersionUID = 1L;
 	private List<String> dates;
 	private final String[] columnNames = new String[] { " " };
 

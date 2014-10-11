@@ -1,31 +1,36 @@
 package com.course.congress.controlers;
 
-import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JPanel;
 
 import com.course.congress.main.CongressCenterForm;
-import com.course.congress.pannels.PHallForm;
-
 
 public class PPanelControler {
 	
 	private static ArrayList<JPanel> panels = new ArrayList<JPanel>();
-	public static JDesktopPane jDesktopPane = new JDesktopPane();
+	public static JDesktopPane jDesktopPane = new JDesktopPane(){
+		private static final long serialVersionUID = 1L;
+		private Image bg = new ImageIcon("img\\background.jpeg").getImage();
+		public void paintComponent(Graphics g) {
+			g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+		}
+    };
 	public static CongressCenterForm mainPanel = new CongressCenterForm();
 	
 	private static void setNewPanel(JPanel panel) {
 		mainPanel.remove(jDesktopPane);
 		jDesktopPane = new JDesktopPane();
 		jDesktopPane.add(panel);
-		jDesktopPane.setBackground(Color.GRAY);
 		jDesktopPane.setVisible(true);
 		panel.setVisible(true);
-		panel.setSize(1000, 650);
+		panel.setSize(1000, 700);
 		mainPanel.add(jDesktopPane);
 		mainPanel.revalidate();
 	}

@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class Schedule implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	private HashMap<String, ArrayList<Event>> schedules;
 
 	public Schedule() {

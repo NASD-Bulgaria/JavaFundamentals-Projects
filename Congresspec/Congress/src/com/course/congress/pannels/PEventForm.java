@@ -1,6 +1,8 @@
 package com.course.congress.pannels;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
 
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,7 +48,8 @@ import com.course.congress.utils.DateUtils;
 public class PEventForm extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-
+	private Image bg = new ImageIcon("img\\background.jpeg").getImage();
+	
 	private JScrollPane scrollPane;
 
 	private JLabel name;
@@ -53,15 +57,10 @@ public class PEventForm extends JPanel {
 	private JLabel endDate;
 	private JLabel type;
 	private JLabel description;
-	private JLabel promotionalMaterials;
 
 	private JTextField eventName;
 	private JTextField eventType;
 	private JTextArea eventDescription;
-	// set the equipment chooser
-	// set the way that u want to choose the arrangement of the hall
-	// set the way to select if promotional materials are selected and the way
-	// that u want to choose them
 
 	private JButton addEvent;
 	private JButton removeEvent;
@@ -86,8 +85,6 @@ public class PEventForm extends JPanel {
 	public PEventForm() {
 		final PEventForm currentPanel = this;
 		setLayout(null);
-		setSize(1000, 1000);
-		setBackground(Color.GRAY);
 		
 		Calendar cal = Calendar.getInstance();
 		currentMonth = cal.get(Calendar.MONTH);
@@ -99,36 +96,38 @@ public class PEventForm extends JPanel {
 		name.setBounds(10, 10, 40, 20);
 		add(name);
 		eventName = new JTextField();
-		eventName.setBounds(50, 10, 130, 20);
+		eventName.setBounds(50, 10, 130, 25);
 		add(eventName);
 
 		startDate = new JLabel("Start Date");
-		startDate.setBounds(190, 10, 60, 20);
+		startDate.setBounds(195, 12, 60, 20);
 		add(startDate);
 		dateModelStartDate = new UtilDateModel();
 		dateModelStartDate.setDate(currentYear, currentMonth, currentDay);
 		dateModelStartDate.setSelected(true);
 		datePanelStartDate = new JDatePanelImpl(dateModelStartDate);
 		datePickerStartDate = new JDatePickerImpl(datePanelStartDate);
-		datePickerStartDate.setBounds(255, 10, 130, 20);
+		datePickerStartDate.setOpaque(false);
+		datePickerStartDate.setBounds(255, 10, 130, 30);
 		add(datePickerStartDate);
 
 		endDate = new JLabel("End Date");
-		endDate.setBounds(395, 10, 60, 20);
+		endDate.setBounds(395, 12, 60, 20);
 		add(endDate);
 		dateModelEndDate = new UtilDateModel();
 		dateModelEndDate.setDate(currentYear, currentMonth, currentDay);
 		dateModelEndDate.setSelected(true);
 		datePanelEndDate = new JDatePanelImpl(dateModelEndDate);
 		datePickerEndDate = new JDatePickerImpl(datePanelEndDate);
-		datePickerEndDate.setBounds(450, 10, 130, 20);
+		datePickerEndDate.setOpaque(false);
+		datePickerEndDate.setBounds(450, 10, 130, 30);
 		add(datePickerEndDate);
 
 		type = new JLabel("Type");
-		type.setBounds(590, 10, 40, 20);
+		type.setBounds(590, 12, 40, 20);
 		add(type);
 		eventType = new JTextField();
-		eventType.setBounds(620, 10, 145, 20);
+		eventType.setBounds(620, 10, 145, 25);
 		add(eventType);
 
 		description = new JLabel("Description");
@@ -142,11 +141,6 @@ public class PEventForm extends JPanel {
 		addEvent = new JButton("Add Event");
 		addEvent.setBounds(800, 10, 120, 40);
 		add(addEvent);
-
-		//this button is not needed since the table is updated by double click in a cell.
-		/*editEvent = new JButton("Edit Event");
-		editEvent.setBounds(140, 520, 120, 40);
-		add(editEvent);*/
 
 		removeEvent = new JButton("Remove Event");
 		removeEvent.setBounds(800, 460, 120, 40);
@@ -177,6 +171,8 @@ public class PEventForm extends JPanel {
 		eventTableModel = new EventTableModel(eventList);
 		// create the table
 		eventsTable = new JTable(eventTableModel);
+		eventsTable.setShowGrid(true);
+		eventsTable.setGridColor(new Color(167,206,221));
 		eventsTable.setColumnSelectionAllowed(false);
 		eventsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		setTableAlignment(eventsTable);
@@ -203,7 +199,7 @@ public class PEventForm extends JPanel {
 				startDateText = DateUtils.returnDateWithoutTime(startDateText);
 				Date endDateText = (Date) datePickerEndDate.getModel().getValue();
 				endDateText = DateUtils.returnDateWithoutTime(endDateText);
-				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24) + 1);
+				int durationText = (int) ((endDateText.getTime() - startDateText.getTime()) / (1000 * 60 * 60 * 24));
 				String typeText = eventType.getText();
 				String description = eventDescription.getText();
 				//checking if end date is after start date
@@ -247,9 +243,7 @@ public class PEventForm extends JPanel {
 		        if (eventsTable.getSelectedRow() != -1) {
 		        	DataStorage.removeEvent(eventTableModel.getRowObject(eventsTable.getSelectedRow()).getID());
 		        	eventTableModel.removeRow(eventsTable.getSelectedRow());
-		        } else {
-		        	JOptionPane.showMessageDialog(null, "Please select event from the table first.");
-		        }
+		        } 
 		        removeEvent.setEnabled(false);	
 		        equipment.setEnabled(false);
 		        hallArrangement.setEnabled(false);
@@ -272,17 +266,18 @@ public class PEventForm extends JPanel {
 					int column = e.getColumn();
 					TableModel model = eventsTable.getModel();
 					if (column == 2 || column == 3) {
-						if (eventsTable.getModel().getValueAt(e.getFirstRow(),
-								e.getColumn()) != null) {
+						if (eventsTable.getModel().getValueAt(e.getFirstRow(), e.getColumn()) != null) {
 							Date startDate = ((Date) model.getValueAt(row, 2));
 							Date endDate = ((Date) model.getValueAt(row, 3));
 							int days = (int) ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 							if (days < 0 && column == 3) {
-								JOptionPane.showMessageDialog(null,	"End date must be after start date!");
-								model.setValueAt(startDate, row, column);
+								//JOptionPane.showMessageDialog(null,	"End date must be after start date!");
+								Date dateToSet = (Date) model.getValueAt(row, 2);
+								model.setValueAt(dateToSet, row, column);
 							} else if (days < 0 && column == 2) {
-								JOptionPane.showMessageDialog(null, "End date must be after start date!");
-								model.setValueAt(endDate, row, column);
+								//JOptionPane.showMessageDialog(null, "End date must be after start date!");
+								Date dateToSet = (Date) model.getValueAt(row, 3);
+								model.setValueAt(dateToSet, row, column);
 							} else {
 								model.setValueAt(days, row, 1);
 							}
@@ -336,6 +331,10 @@ public class PEventForm extends JPanel {
 		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 		//sets the alignment for integer columns only
 		table.setDefaultRenderer(Integer.class, centerRenderer);
+	}
+	
+	public void paintComponent(Graphics g) {
+		g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
 	}
 	
 }

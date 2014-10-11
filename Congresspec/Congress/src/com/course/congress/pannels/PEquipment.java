@@ -1,10 +1,13 @@
 package com.course.congress.pannels;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -13,13 +16,12 @@ import javax.swing.JTextField;
 
 import com.course.congress.controlers.DataFlowControler;
 import com.course.congress.controlers.PPanelControler;
-import com.course.congress.datastorage.DataStorage;
 import com.course.congress.objects.Equipment;
-
 
 public class PEquipment extends JPanel{
 
 	private static final long serialVersionUID = 1L;
+	private Image bg = new ImageIcon("img\\background.jpeg").getImage();
 
 	private JLabel michrophoneLabel;
 	private JLabel soundSystemLabel;
@@ -38,28 +40,20 @@ public class PEquipment extends JPanel{
 	private JButton request;
 	private JButton cancel;
 	
-	
-	PEquipment()
-	{
-		setBackground(Color.GRAY);
-		setSize(200,300);
+	PEquipment() {
 		setLayout(null);
-		
-		
 		
 		michrophoneLabel = new JLabel("Microphones");
 		michrophoneLabel.setBounds(10, 10, 90, 20);
 		add(michrophoneLabel);
-		michrophoneLabel.setForeground(Color.WHITE);
 		
 		michrophones = new JTextField();
-		michrophones.setBounds(100,10,150,20);
+		michrophones.setBounds(100,10,150,25);
 		add(michrophones);
 		
 		soundSystemLabel = new JLabel("Sound System");
 		soundSystemLabel.setBounds(10, 40, 150, 20);
 		add(soundSystemLabel);
-		soundSystemLabel.setForeground(Color.WHITE);
 		
 		soundSystem = new JCheckBox();
 		soundSystem.setBounds(100, 43, 20, 15);
@@ -69,16 +63,14 @@ public class PEquipment extends JPanel{
 		mobileScreenLabel = new JLabel("Mobile Screens");
 		mobileScreenLabel.setBounds(10, 70, 150, 20);
 		add(mobileScreenLabel);
-		mobileScreenLabel.setForeground(Color.WHITE);
 		
 		mobileScreens = new JTextField();
-		mobileScreens.setBounds(100, 70, 150, 20);
+		mobileScreens.setBounds(100, 70, 150, 25);
 		add(mobileScreens);
 		
 		additionalLightingLabel = new JLabel("Additional light");
 		additionalLightingLabel.setBounds(10, 100, 90, 20);
 		add(additionalLightingLabel);
-		additionalLightingLabel.setForeground(Color.WHITE);
 		
 		additionalLighting = new JCheckBox();
 		additionalLighting.setBounds(100, 103, 20, 15);
@@ -88,19 +80,17 @@ public class PEquipment extends JPanel{
 		computerLabel = new JLabel("Computers");
 		computerLabel.setBounds(10, 130, 90, 20);
 		add(computerLabel);
-		computerLabel.setForeground(Color.WHITE);
 		
 		computer = new JTextField();
-		computer.setBounds(100, 130, 150, 20);
+		computer.setBounds(100, 130, 150, 25);
 		add(computer);
 		
 		projectorLabel = new JLabel("Projectors");
 		projectorLabel.setBounds(10, 160, 90, 20);
 		add(projectorLabel);
-		projectorLabel.setForeground(Color.WHITE);
 		
 		projector = new JTextField();
-		projector.setBounds(100, 160, 150, 20);
+		projector.setBounds(100, 160, 150, 25);
 		add(projector);
 		
 		initData();
@@ -198,9 +188,7 @@ public class PEquipment extends JPanel{
 				return false;
 			}
 		});
-		
 	}
-
 
 	private void initData() {
 		if(DataFlowControler.getCurrentEvent().getEquipments() != null) {
@@ -234,4 +222,7 @@ public class PEquipment extends JPanel{
 		}
 	}
 	
+	public void paintComponent(Graphics g) {
+		g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+	}
 }

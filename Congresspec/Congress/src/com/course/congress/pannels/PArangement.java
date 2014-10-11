@@ -1,19 +1,15 @@
 package com.course.congress.pannels;
 
-import java.awt.Color;
-import java.awt.Shape;
-import java.awt.TextArea;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.geom.Area;
-import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,11 +21,10 @@ import com.course.congress.objects.HallArrangement;
 public class PArangement extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
+	private Image bg = new ImageIcon("img\\background.jpeg").getImage();
 	
 	private JComboBox<String> styles;
 	private JComboBox<String> bannerStyles;
-	private JCheckBox additionalAd;
-	private JComboBox stylesWithAd;
 	private JLabel picture;
 	private JButton apply;
 	final JPanel thisPanel;
@@ -41,10 +36,6 @@ public class PArangement extends JPanel{
 		thisPanel = this;
 		
 		setLayout(null);
-		setSize(1000, 1000);
-		setBackground(Color.GRAY);
-		
-
 		
 		apply = new JButton("Apply");
 		apply.setBounds(10, 190, 100, 25);
@@ -55,14 +46,14 @@ public class PArangement extends JPanel{
 		add(cancel);
 		
 		styles = new JComboBox<String>(types);
-		styles.setBounds(10,10,100,20);
+		styles.setBounds(10,10,130,25);
 		styles.setVisible(true);
 		styles.setMaximumRowCount(5);
 		
 		add(styles);
 		
 		bannerStyles = new JComboBox<String>();
-		bannerStyles.setBounds(350,10,100,20);
+		bannerStyles.setBounds(350,10,130,25);
 		bannerStyles.setVisible(true);
 		bannerStyles.setMaximumRowCount(5);
 		bannerStyles.setEnabled(false);
@@ -71,7 +62,6 @@ public class PArangement extends JPanel{
 		picture = new JLabel();
 		initData();
 		styles.addItemListener(new ItemListener() {
-			
 			@Override
 			public void itemStateChanged(ItemEvent event) {
 				
@@ -88,7 +78,6 @@ public class PArangement extends JPanel{
 						picture.setBounds(130, 10, 300, 300);
 						picture.setVisible(true);
 						add(picture);
-						
 						
 						ArrayList<String> bannersTypes = HallArrangement.getArrangementswithbanners().get((String) styles.getSelectedItem());
 						if(bannersTypes != null) {
@@ -110,7 +99,6 @@ public class PArangement extends JPanel{
 						thisPanel.repaint();
 					}
 				}
-
 			}
 		});
 		
@@ -165,7 +153,6 @@ public class PArangement extends JPanel{
 	}
 
 	private void initData() {
-//		DataFlowControler.getCurrentEvent().getArrangement().getType();
 		if (DataFlowControler.getCurrentEvent().getArrangement() != null) {
 			HallArrangement hallarr;
 			if(DataFlowControler.getCurrentEvent().getArrangement().getBannersType() != null) {
@@ -200,6 +187,10 @@ public class PArangement extends JPanel{
 			add(picture);			
 			thisPanel.repaint();
 		}
+	}
+	
+	public void paintComponent(Graphics g) {
+		g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
 	}
 
 }

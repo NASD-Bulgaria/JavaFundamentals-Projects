@@ -1,6 +1,5 @@
 package com.course.congress.main;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import com.course.congress.controlers.PPanelControler;
 import com.course.congress.datastorage.DataStorage;
+import com.course.congress.pannels.PAboutForm;
 import com.course.congress.pannels.PAddScheduleForm;
 import com.course.congress.pannels.PEventForm;
 import com.course.congress.pannels.PHallForm;
@@ -21,17 +21,11 @@ import com.course.congress.pannels.PHallForm;
 public class CongressCenterForm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
 	private JDesktopPane jDesktopPane;
 	
 	public CongressCenterForm() {
-		
 		super("Congress Center");
 		jDesktopPane = PPanelControler.getDesktopPane();
-		jDesktopPane.setBackground(Color.GRAY);
-//		final ScheduleForm scheduleForm = new ScheduleForm();
-//		final AboutForm aboutForm = new AboutForm();
-//da gi nabutash v handlerite tiq otgore deto sa
 		
 		JMenu fileMenu = new JMenu("File");
 		JMenuItem saveFile = new JMenuItem("Save");
@@ -45,9 +39,6 @@ public class CongressCenterForm extends JFrame {
 		JMenu hallMenu = new JMenu("Halls");
 		JMenuItem addHall = new JMenuItem("Add");
 		hallMenu.add(addHall);
-//		hallMenu.addSeparator();
-//		JMenuItem exitItem = new JMenuItem("Exit");
-//		hallMenu.add(exitItem);
 		
 		JMenu eventMenu = new JMenu("Events");
 		JMenuItem addEvent = new JMenuItem("Add Event");
@@ -56,9 +47,6 @@ public class CongressCenterForm extends JFrame {
 		JMenu schedule = new JMenu("Schedule");
 		JMenuItem showSchedule = new JMenuItem("Show Schedule");
 		schedule.add(showSchedule);
-		/*JMenuItem editSchedule= new JMenuItem("Edit schedule");
-		schedule.add(editSchedule);*/
-		
 
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem aboutMenuItem = new JMenuItem("About our companies");
@@ -117,15 +105,12 @@ public class CongressCenterForm extends JFrame {
 			}
 		});
 		
-		
-//		aboutMenuItem.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				if(!aboutForm.isVisible()){
-//				jDesktopPane.add(aboutForm);
-//				aboutForm.setVisible(true);
-//				}
-//			}
-//		});
+		aboutMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PAboutForm aboutForm = new PAboutForm();
+				PPanelControler.showPanel(aboutForm);
+			}
+		});
 		
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {

@@ -11,6 +11,8 @@ import com.course.congress.objects.Hall;
  */
 public class HallTableModel extends AbstractTableModel {
 
+	private static final long serialVersionUID = 1L;
+	
 	private final List<Hall> hallList;
 	private final String[] columnNames = new String[] {"Name", "Capacity", "Floor"};
 	private final Class[] columnClass = new Class[] { String.class, Integer.class, Integer.class};

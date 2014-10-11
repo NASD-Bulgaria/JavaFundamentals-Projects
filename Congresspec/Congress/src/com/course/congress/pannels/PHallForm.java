@@ -1,11 +1,14 @@
 package com.course.congress.pannels;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -26,16 +29,17 @@ import com.course.congress.objects.Hall;
 public class PHallForm extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private Image bg = new ImageIcon("img\\background.jpeg").getImage();
+	
 	private JLabel name;
 	private JLabel capacity;
 	private JLabel floor;
 
 	private JTextField hallName;
 	private JFormattedTextField hallCapacity;
-	private JComboBox hallFloor;
+	private JComboBox<Integer> hallFloor;
 
 	private JButton addHall;
-	private JButton editHall;
 	private JButton removeHall;
 
 	private JTable hallsTable;
@@ -48,31 +52,30 @@ public class PHallForm extends JPanel {
 
 	public PHallForm() {
 		setLayout(null);
-		setBackground(Color.GRAY);
 		
 		name = new JLabel("Name");
-		name.setBounds(10, 10, 40, 20);
+		name.setBounds(10, 12, 40, 20);
 		add(name);
 		hallName = new JTextField();
-		hallName.setBounds(50, 10, 130, 20);
+		hallName.setBounds(48, 10, 130, 25);
 		hallName.setVisible(true);
 		add(hallName);
 
 		capacity = new JLabel("Capacity");
-		capacity.setBounds(200, 10, 50, 20);
+		capacity.setBounds(200, 12, 50, 20);
 		add(capacity);
 		hallCapacity = new JFormattedTextField();
 		hallCapacity.setValue(new Integer(150));
 		hallCapacity.setColumns(10);
-		hallCapacity.setBounds(260, 10, 80, 20);
+		hallCapacity.setBounds(250, 10, 80, 25);
 		add(hallCapacity);
 
 		floor = new JLabel("Floor");
-		floor.setBounds(350, 10, 50, 20);
+		floor.setBounds(365, 12, 50, 20);
 		add(floor);
-		hallFloor = new JComboBox(floors);
-		hallFloor.setMaximumRowCount(3);
-		hallFloor.setBounds(400, 10, 80, 20);
+		hallFloor = new JComboBox<Integer>(floors);
+		hallFloor.setMaximumRowCount(5);
+		hallFloor.setBounds(400, 10, 80, 27);
 		add(hallFloor);
 
 		// Creating editable jTable for halls with data from file
@@ -89,6 +92,8 @@ public class PHallForm extends JPanel {
 		hallTableModel = new HallTableModel(hallList);
 		// create the table
 		hallsTable = new JTable(hallTableModel);
+		hallsTable.setShowGrid(true);
+		hallsTable.setGridColor(new Color(167,206,221));
 		setTableAlignment(hallsTable);
 		hallsTable.setFillsViewportHeight(true);
 		scrollPane = new JScrollPane(hallsTable);
@@ -97,10 +102,6 @@ public class PHallForm extends JPanel {
 		addHall = new JButton("Add Hall");
 		addHall.setBounds(500, 10, 110, 40);
 		add(addHall);
-
-		/*editHall = new JButton("Edit Hall");
-		editHall.setBounds(580, 200, 110, 40);
-		add(editHall);*/
 
 		removeHall = new JButton("Remove Hall");
 		removeHall.setBounds(500, 520, 110, 40);
@@ -175,6 +176,9 @@ public class PHallForm extends JPanel {
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 		hallsTable.setDefaultRenderer(Integer.class, centerRenderer);
-
+	}
+	
+	public void paintComponent(Graphics g) {
+		g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
 	}
 }

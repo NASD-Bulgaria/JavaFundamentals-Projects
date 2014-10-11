@@ -103,6 +103,7 @@ public class DataStorage {
 			eventsPerHall = schedules.get(hallName) != null ? schedules.get(hallName) : new ArrayList<Event>();
 		} else {
 			schedules = new HashMap<String, ArrayList<Event>>();
+			eventsPerHall = new ArrayList<Event>();
 		}
 		eventsPerHall.add(event);
 		schedules.put(hallName, eventsPerHall);

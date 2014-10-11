@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.course.congress.objects.Client;
 import com.course.congress.objects.Event;
 import com.course.congress.objects.Hall;
-import com.course.congress.objects.Schedule;
 
 public class CongressData implements Serializable {
 	
@@ -16,7 +14,6 @@ public class CongressData implements Serializable {
 	private Event[] events;
 	private Hall[] halls;
 	private HashMap<String, ArrayList<Event>> schedules;
-	private Client[] clients;
 	
 	public Event[] getEvents() {
 		return events;

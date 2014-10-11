@@ -15,8 +15,8 @@ public class EventTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = 1L;
 	private final List<Event> eventList;
-	private final String[] columnNames = new String[] {"Name", "Duration (# of days)", "Start Date", "End Date", "Type", "Description"};
-	private final Class[] columnClass = new Class[] { String.class, Integer.class, Date.class, Date.class, String.class,  String.class};
+	private final String[] columnNames = new String[] {"Name", "Duration (# of days)", "Start Date", "End Date", "Type", "Description", "Equipment", "Arrangement"};
+	private final Class[] columnClass = new Class[] { String.class, Integer.class, Date.class, Date.class, String.class,  String.class, Boolean.class, Boolean.class};
 
 	public EventTableModel(List<Event> eventList) {
 		this.eventList = eventList;
@@ -48,7 +48,7 @@ public class EventTableModel extends AbstractTableModel {
 		if (0 == columnIndex) {
 			return row.getName();
 		} else if (1 == columnIndex) {
-			return row.getDuration();
+			return (row.getDuration() + 1);
 		} else if (2 == columnIndex) {
 			return row.getStartDate();
 		} else if (3 == columnIndex) {
@@ -57,6 +57,18 @@ public class EventTableModel extends AbstractTableModel {
 			return row.getType();
 		} else if(5 == columnIndex){
 			return row.getDescription();
+		} else if (6 == columnIndex){
+			if(row.getEquipments() != null){
+				return true;
+			} else {
+				return false;
+			}
+		} else if (7 == columnIndex){
+			if(row.getArrangement() != null){
+				return true;
+			} else {
+				return false;
+			}
 		}
 		return null;
 	}
@@ -75,7 +87,8 @@ public class EventTableModel extends AbstractTableModel {
 		if (0 == columnIndex) {
 			row.setName((String) aValue);
 		} else if (1 == columnIndex) {
-			row.setDuration((Integer) aValue);
+			int duration = (Integer) aValue;
+			row.setDuration(duration);
 		} else if (2 == columnIndex) {
 			row.setStartDate((Date) aValue);
 		} else if (3 == columnIndex) {

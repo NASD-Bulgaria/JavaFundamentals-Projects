@@ -1,8 +1,6 @@
 package com.course.congress.utils;
 
 import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -12,8 +10,6 @@ import java.util.GregorianCalendar;
  */
 public class DateUtils {
 
-	private static SimpleDateFormat formatter = new SimpleDateFormat(
-			"dd/MM/yyyy");
 	private static Calendar cal = Calendar.getInstance();
 
 	/**
@@ -32,15 +28,7 @@ public class DateUtils {
 		cal.set(Calendar.MILLISECOND, 0);
 
 	    res = cal.getTime();
-
 	    return res;
-		/*try {
-			return formatter.parse(formatter.format(date));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		;
-		return date;*/
 	}
 
 	public static String getCurrentMonth(int monthIndex) {

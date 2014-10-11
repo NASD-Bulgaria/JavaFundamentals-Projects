@@ -3,9 +3,12 @@ package com.course.congress.pannels;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -39,6 +43,7 @@ import com.course.congress.utils.DateUtils;
 public class PAddScheduleForm extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private Image bg = new ImageIcon("img\\background.jpeg").getImage();
 	
 	private JLabel hallNameLabel;
 	private JLabel dateLabel;
@@ -74,7 +79,6 @@ public class PAddScheduleForm extends JPanel {
 
 	public PAddScheduleForm() {
 		setLayout(null);
-		setBackground(Color.GRAY);
 
 		currentMonth = Calendar.getInstance().get(Calendar.MONTH);
 		currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -85,17 +89,17 @@ public class PAddScheduleForm extends JPanel {
 		existingEvent = new ArrayList<Event>();
 		
 		hallNameLabel = new JLabel("Hall");
-		hallNameLabel.setBounds(10, 10, 30, 20);
+		hallNameLabel.setBounds(10, 12, 30, 20);
 		add(hallNameLabel);
 		hallCombo = new JComboBox(new DefaultComboBoxModel(halls));
-		hallCombo.insertItemAt("Please choose hall..", 0);
+		hallCombo.insertItemAt("Please choose..", 0);
 		hallCombo.setSelectedIndex(0);
-		hallCombo.setMaximumRowCount(3);
-		hallCombo.setBounds(40, 10, 140, 20);
+		hallCombo.setMaximumRowCount(5);
+		hallCombo.setBounds(38, 10, 140, 25);
 		add(hallCombo);
 
-		dateLabel = new JLabel("Choose date");
-		dateLabel.setBounds(200, 10, 100, 20);
+		dateLabel = new JLabel("Date");
+		dateLabel.setBounds(220, 12, 100, 20);
 		add(dateLabel);
 		dateModel = new UtilDateModel();
 		dateModel.setDate(currentYear, currentMonth, currentDay);
@@ -104,20 +108,21 @@ public class PAddScheduleForm extends JPanel {
 		datePanel.setEnabled(false);
 		datePicker = new JDatePickerImpl(datePanel);
 		datePicker.setEnabled(false);
-		datePicker.setBounds(280, 10, 130, 20);
+		datePicker.setOpaque(false);
+		datePicker.setBounds(250, 10, 130, 30);
 		add(datePicker);
 
 		eventNameLabel = new JLabel("Event");
-		eventNameLabel.setBounds(430, 10, 50, 20);
+		eventNameLabel.setBounds(430, 12, 50, 20);
 		add(eventNameLabel);
 		eventCombo = new JComboBox(new DefaultComboBoxModel(existingEvent.toArray()));
 		eventCombo.setEnabled(false);
 		eventCombo.setMaximumRowCount(3);
-		eventCombo.setBounds(470, 10, 120, 20);
+		eventCombo.setBounds(467, 10, 122, 25);
 		add(eventCombo);
 		
 		buttonSave = new JButton("Edit");
-		buttonSave.setBounds(600, 10, 100, 20);
+		buttonSave.setBounds(600, 10, 100, 25);
 		buttonSave.setEnabled(false);
 		add(buttonSave);
 
@@ -134,12 +139,21 @@ public class PAddScheduleForm extends JPanel {
 		nextMonth.setBounds(570, 70, 130, 20);
 		add(nextMonth);
 		
-		usermessagesLabel = new JLabel("Message to the user");
-		usermessagesLabel.setBounds(770, 10, 150, 20);
+		String label = "";
+		ArrayList<Event> assignedEvents = getAllAssignedEvents();
+		for (int i = 0; i< events.length; i++){
+			if(!assignedEvents.contains(events[i])){
+				label +=  "<br>" + events[i].getName() + " - " + new SimpleDateFormat("dd MMM yyyy").format(events[i].getStartDate());
+			}
+		}
+		usermessagesLabel = new JLabel("<html>Unassigned events:<br>"+label+"</html>");
+		usermessagesLabel.setBounds(730, 10, 450, 200);
 		add(usermessagesLabel);
 
 		table = new JTable(new ScheduleTableModel(halls, schedulesMap,currentMonth,
 				currentYear));
+		table.setShowGrid(true);
+		table.setGridColor(new Color(167,206,221));
 
 		List<String> dates = new ArrayList<String>();
 		for (int i = 0; i < DateUtils.getDaysOfMonth(currentMonth, currentYear); i++) {
@@ -290,30 +304,53 @@ public class PAddScheduleForm extends JPanel {
 					try {
 						selectedEvent = (Event) eventCombo.getSelectedItem();
 					} catch (ClassCastException ce) {
-						selectedEvent = eventsPerHall.get(0);
+						//eventsPerHall = DataStorage.get
+						for (Event event : eventsPerHall) {
+							if(event.getStartDate().equals(selectedDate)){
+								selectedEvent = event;
+							}
+						}
 						DataStorage.removeSchedule(hallName, selectedEvent);
 						System.out.println("Event detached.");
 						table.setModel(new ScheduleTableModel(halls, schedulesMap, currentMonth,
 								currentYear));
+						ArrayList<Event> assignedEvents = getAllAssignedEvents();
+						String label = "";
+						for (int i = 0; i< events.length; i++){
+							if(!assignedEvents.contains(events[i])){
+								label +=  "<br>" + events[i].getName() + " - " + new SimpleDateFormat("dd MMM yyyy").format(events[i].getStartDate());
+							}
+						}
+						usermessagesLabel.setText("<html>Unassigned events:<br>"+label+"</html>");
 						return;
 					}
-					int duration = selectedEvent.getDuration();
+					int duration = selectedEvent.getDuration() + 1;
 					if (duration > 1) {
 						int rowIndex = DateUtils.getDayIndex(selectedDate);
 						int colIndex = Arrays.asList(halls).indexOf(selectedHall);
-						do {
-							rowIndex = rowIndex + (duration - 1);
+						while (duration > 1) {
 							Object cellValue = table.getModel().getValueAt(rowIndex, colIndex);
 							if (cellValue == null) {
 								duration--;
+								rowIndex++;
 							} else {
-								JOptionPane.showMessageDialog(null, "The hall is occupied for the selected period!");
+								JOptionPane.showMessageDialog(null, "The hall is occupied for the selected period! Please choose another hall!");
 								return;
 							}
-						} while (duration >= 1);
+						} 
 					}
 					DataStorage.addNewSchedule(hallName, selectedEvent);
-					table.setModel(new ScheduleTableModel(halls, schedulesMap, currentMonth, currentYear));
+					table.setModel(new ScheduleTableModel(halls, DataStorage.getSchedule(), currentMonth, currentYear));
+					String label = "";
+					ArrayList<Event> assignedEvents = getAllAssignedEvents();
+					for (int i = 0; i< events.length; i++){
+						if(!assignedEvents.contains(events[i])){
+							label +=  "<br>" + events[i].getName() + " - " + new SimpleDateFormat("dd MMM yyyy").format(events[i].getStartDate());
+						}
+					}
+					usermessagesLabel.setText("<html>Unassigned events:<br>"+label+"</html>");
+					eventCombo.setEnabled(false);
+					buttonSave.setEnabled(false);
 				}
 			}
 		});
@@ -323,9 +360,10 @@ public class PAddScheduleForm extends JPanel {
 			ScheduleDatesTableModel scheduleDatesTableModel) {
 		headerTable.setModel(scheduleDatesTableModel);
 		headerTable.setShowGrid(false);
+		headerTable.setOpaque(false);
 		headerTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		headerTable.setPreferredScrollableViewportSize(new Dimension(50, 0));
-		headerTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+		headerTable.setPreferredScrollableViewportSize(new Dimension(60, 0));
+		headerTable.getColumnModel().getColumn(0).setPreferredWidth(60);
 		headerTable.getColumnModel().getColumn(0)
 				.setCellRenderer(new TableCellRenderer() {
 					@Override
@@ -353,16 +391,8 @@ public class PAddScheduleForm extends JPanel {
 		Hall selectedHall = (Hall) hallCombo.getSelectedItem();
 		String selectedHallName = selectedHall.getName();
 		ArrayList<Event> allAssignedEvents = new ArrayList<Event>();
+		allAssignedEvents = getAllAssignedEvents();
 		eventCombo.removeAllItems();
-		
-		if (!schedulesMap.isEmpty()) {
-			for (Map.Entry<String, ArrayList<Event>> entry : schedulesMap.entrySet()) {
-				ArrayList<Event> assignedEventsPerHall = entry.getValue();
-				for (Event event : assignedEventsPerHall) {
-					allAssignedEvents.add(event);
-				}
-			}
-		}
 		
 		for (int i = 0; i < events.length; i++) {
 			if (events[i].getStartDate().equals(selectedDate)) {
@@ -399,5 +429,22 @@ public class PAddScheduleForm extends JPanel {
 			eventCombo.setEnabled(false);
 			buttonSave.setEnabled(false);
 		}
+	}
+	
+	private ArrayList<Event> getAllAssignedEvents(){
+		ArrayList<Event> allAssignedEvents = new ArrayList<Event>();
+		if (!schedulesMap.isEmpty()) {
+			for (Map.Entry<String, ArrayList<Event>> entry : schedulesMap.entrySet()) {
+				ArrayList<Event> assignedEventsPerHall = entry.getValue();
+				for (Event event : assignedEventsPerHall) {
+					allAssignedEvents.add(event);
+				}
+			}
+		}
+		return allAssignedEvents;
+	}
+	
+	public void paintComponent(Graphics g) {
+		g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
 	}
 }
