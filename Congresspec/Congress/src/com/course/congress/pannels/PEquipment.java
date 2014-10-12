@@ -20,7 +20,7 @@ import com.course.congress.objects.Equipment;
 
 public class PEquipment extends JPanel{
 
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 	private Image bg = new ImageIcon("img\\background.jpeg").getImage();
 
 	private JLabel michrophoneLabel;
